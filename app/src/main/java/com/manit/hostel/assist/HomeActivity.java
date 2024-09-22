@@ -1,20 +1,19 @@
 package com.manit.hostel.assist;
 
-import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.manit.hostel.assist.databinding.ActivityViewEntriesBinding;
+import com.manit.hostel.assist.databinding.ActivityHomeBinding;
 
-public class ViewEnteryActivity extends AppCompatActivity {
-    ActivityViewEntriesBinding lb;
+public class HomeActivity extends AppCompatActivity {
+    @NonNull ActivityHomeBinding lb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        lb = ActivityViewEntriesBinding.inflate(getLayoutInflater());
+        lb = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
-
-
     }
 }
