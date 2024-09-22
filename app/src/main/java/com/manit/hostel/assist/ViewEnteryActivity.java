@@ -5,14 +5,14 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.manit.hostel.assist.databinding.ActivityMainBinding;
+import com.manit.hostel.assist.databinding.ActivityViewEntriesBinding;
 
 public class ViewEnteryActivity extends AppCompatActivity {
-    ActivityMainBinding lb;
+    ActivityViewEntriesBinding lb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lb = ActivityMainBinding.inflate(getLayoutInflater());
+        lb = ActivityViewEntriesBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
 
     }

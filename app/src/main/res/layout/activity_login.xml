@@ -10,7 +10,7 @@
     <FrameLayout
         android:id="@+id/backspan"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/rounded_bg"
         android:elevation="10dp"
         android:translationY="-20dp">
@@ -18,7 +18,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="60dp">
+            android:layout_marginTop="40dp">
 
             <ImageButton
                 android:layout_width="48dp"
@@ -39,7 +39,7 @@
                 android:layout_margin="20dp"
                 android:text="Guard Login"
                 android:textColor="@color/white"
-                android:textSize="32sp"
+                android:textSize="26sp"
                 android:textStyle="bold" />
         </FrameLayout>
 

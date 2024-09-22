@@ -10,7 +10,7 @@
     <FrameLayout
         android:id="@+id/backspan"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/rounded_bg"
         android:elevation="10dp"
         android:translationY="-20dp">
@@ -18,7 +18,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="60dp">
+            android:layout_marginTop="40dp">
 
             <ImageButton
                 android:layout_width="48dp"
@@ -37,19 +37,51 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:text="Guard Login"
+                android:text="Entries"
                 android:textColor="@color/white"
-                android:textSize="32sp"
+                android:textSize="26sp"
                 android:textStyle="bold" />
         </FrameLayout>
 
     </FrameLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:translationY="-40dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_bg"
         android:backgroundTint="@color/color2_light"
-        android:background="@drawable/rounded_bg">
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="30dp"
+        android:translationY="-40dp">
+
+        <TextView
+            android:id="@+id/hostel_name"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:text="Hostel : 10-C"
+            android:textColor="@color/color3" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:text="Date : 22-09-2024"
+            android:textColor="@color/color2" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:text="Exit : 1200       Entered : 50        "
+            android:textColor="@color/color1" />
 
     </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.manit.hostel.assist;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,5 +16,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         lb = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
+        lb.loginButton.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+            finish();
+        });
     }
 }
