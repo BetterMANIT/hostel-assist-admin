@@ -5,15 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.manit.hostel.assist.databinding.ActivityMainBinding;
+import com.manit.hostel.assist.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
-    @NonNull ActivityMainBinding lb;
+    @NonNull ActivityLoginBinding lb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        lb = ActivityMainBinding.inflate(getLayoutInflater());
+        lb = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
     }
 }
