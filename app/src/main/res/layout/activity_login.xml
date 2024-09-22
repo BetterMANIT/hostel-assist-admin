@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:text="Login"
+                android:text="Guard Login"
                 android:textColor="@color/white"
                 android:textSize="32sp"
                 android:textStyle="bold" />
@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            app:boxBackgroundColor="@color/color1"
+            app:boxBackgroundColor="#102A295E"
             app:startIconDrawable="@drawable/alternate_email_24dp_5f6368_fill0_wght400_grad0_opsz24">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             app:endIconMode="password_toggle"
-            app:boxBackgroundColor="@color/color1"
+            app:boxBackgroundColor="#102A295E"
             app:startIconDrawable="@drawable/password_24dp_5f6368_fill0_wght400_grad0_opsz24">
 
             <com.google.android.material.textfield.TextInputEditText
