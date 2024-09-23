@@ -20,11 +20,6 @@ public class MainActivity extends AppCompatActivity {
             Intent in = new Intent();
             in.setClass(getApplicationContext(),LoginActivity.class);
             startActivity(in);
-            finish();
-        },1200);
-        addClickLogic();
-    }
-
-    private void addClickLogic() {
+        },2000);
     }
 }
