@@ -1,6 +1,8 @@
 package com.manit.hostel.assist.adapters;
+
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,10 +10,12 @@ import com.manit.hostel.assist.data.Entries;
 import com.manit.hostel.assist.databinding.StudentViewBinding;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
-public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesViewHolder> {
 
+public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesViewHolder> {
+    public static final int ALL_FILTER = 1;
+    public static final int EXIT_ONLY_FILTER = 2;
+    public static final int ENTERED_FILTER = 3;
     private ArrayList<Entries> originalEntriesList;
     private ArrayList<Entries> filteredEntriesList;
 
@@ -35,7 +39,7 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
     public void onBindViewHolder(@NonNull EntriesViewHolder holder, int position) {
         // Get current entry from the filtered list
         Entries currentEntry = filteredEntriesList.get(position);
-
+        holder.binding.index.setText(String.valueOf(position + 1));
         // Bind data to the views using the binding object
         holder.binding.entryNo.setText("Entry No. - " + currentEntry.getEntryNo());
         holder.binding.name.setText("Name: " + currentEntry.getName());
@@ -51,12 +55,13 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
     }
 
     // Method to filter only entries that have an exit time
-       public void filterExitOnly() {
+    public void filterExitOnly() {
         filteredEntriesList = (ArrayList<Entries>) originalEntriesList.stream()
                 .filter(entry -> entry.getEntryTime() == null || !entry.getEntryTime().isEmpty())
                 .collect(Collectors.toList());
         notifyDataSetChanged();
     }
+
     public void filterEntered() {
         filteredEntriesList = (ArrayList<Entries>) originalEntriesList.stream()
                 .filter(entry -> entry.getEntryTime() != null && !entry.getEntryTime().isEmpty())
@@ -75,6 +80,28 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
         this.filteredEntriesList = new ArrayList<>(entriesList);
         notifyDataSetChanged();
     }
+
+    public void filterEntries(int enteredFilter) {
+        switch (enteredFilter) {
+            case ALL_FILTER:
+                resetFilter();
+                break;
+            case EXIT_ONLY_FILTER:
+                filterExitOnly();
+                break;
+            case ENTERED_FILTER:
+                filterEntered();
+                break;
+        }
+    }
+
+    public void filterSearch(String txt) {
+        filteredEntriesList = (ArrayList<Entries>) originalEntriesList.stream()
+                .filter(entry -> entry.getName().contains(txt) || entry.getRoomNo().contains(txt)|| entry.getScholarNo().contains(txt) || entry.getEntryNo().contains(txt))
+                .collect(Collectors.toList());
+        notifyDataSetChanged();
+    }
+
     // ViewHolder class using ViewBinding
     public static class EntriesViewHolder extends RecyclerView.ViewHolder {
         StudentViewBinding binding;

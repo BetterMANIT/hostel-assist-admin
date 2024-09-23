@@ -2,21 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_bg"
-    android:backgroundTint="@color/color2_light"
+    android:background="@color/color2_light"
     android:orientation="horizontal">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp">
+
+
 
         <ImageView
             android:layout_width="100dp"
             android:layout_height="150dp"
             android:scaleType="fitCenter"
             android:src="@drawable/demo_pic1" />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/index"
+            android:padding="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg"
+            android:text="10"
+            android:backgroundTint="@color/color2"
+            android:textColor="@color/white" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +40,7 @@
             android:id="@+id/entry_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Entry No. - 23092024C12938"
+            android:text="Entry No. - 23092024C1"
             android:textColor="#000000"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -69,9 +80,10 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -79,6 +91,7 @@
                     android:textColor="#7A0000"
                     android:textSize="15sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/exit_time"
                     android:layout_width="wrap_content"
@@ -92,8 +105,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
@@ -103,6 +116,7 @@
                     android:textColor="#002F07"
                     android:textSize="15sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/entry_time"
                     android:layout_width="wrap_content"
