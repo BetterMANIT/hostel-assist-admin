@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="/Exit only" />
+
     <FrameLayout
         android:id="@+id/backspan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_bg"
-        android:elevation="10dp"
-        android:translationY="-20dp">
+        android:elevation="10dp">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="40dp">
+            android:layout_height="match_parent">
 
             <ImageButton
+                android:id="@+id/backbtn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:id="@+id/backbtn"
                 android:layout_gravity="center|left"
                 android:layout_margin="20dp"
                 android:background="#00000000"
@@ -41,6 +44,17 @@
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/search_btn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center|right"
+                android:layout_margin="20dp"
+                android:background="#00000000"
+                android:src="@drawable/search"
+                android:tint="@color/white"
+                tools:ignore="UseAppTint" />
         </FrameLayout>
 
     </FrameLayout>
@@ -48,42 +62,87 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_bg"
+        android:background="@drawable/rounded_bg_bottom"
         android:backgroundTint="@color/color2_light"
         android:orientation="vertical"
         android:paddingLeft="20dp"
-        android:paddingBottom="10dp"
         android:paddingTop="30dp"
-        android:translationY="-40dp">
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/hostel_name"
             android:layout_width="match_parent"
-            android:textSize="16sp"
-            android:textStyle="bold"
             android:layout_height="wrap_content"
             android:text="Hostel : 10-C"
-            android:textColor="@color/color3" />
+            android:textColor="@color/color3"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/date"
             android:layout_width="match_parent"
-            android:textSize="16sp"
-            android:textStyle="bold"
             android:layout_height="wrap_content"
             android:text="Date : 22-09-2024"
-            android:textColor="@color/color2" />
+            android:textColor="@color/color2"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/status"
             android:layout_width="match_parent"
-            android:textSize="16sp"
-            android:textStyle="bold"
             android:layout_height="wrap_content"
             android:text="Exit : 1200       Entered : 50        "
+            android:textColor="@color/color1"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/all_filter"
+            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/color2_light"
+            android:padding="4dp"
+            android:text="All"
+            android:textSize="10sp"
+            android:textColor="@color/color1" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/exit_only_filter"
+            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/color2_light"
+            android:padding="4dp"
+            android:text="Exit only"
+            android:marginLeft="10dp"
+            android:marginRight="10dp"
+            android:textSize="10sp"
+            android:textColor="@color/color1" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/entered"
+            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/color2_light"
+            android:padding="4dp"
+            android:text="Entered"
+            android:textSize="10sp"
             android:textColor="@color/color1" />
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/students_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/student_view" />
 
 
 </LinearLayout>
