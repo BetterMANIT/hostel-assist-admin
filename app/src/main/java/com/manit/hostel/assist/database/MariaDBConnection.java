@@ -20,7 +20,7 @@ public class MariaDBConnection {
 
     private RequestQueue mQueue;
     private AppCompatActivity mAppCompatActivity;
-    public void MariaDBConnection(AppCompatActivity mAppCompatActivity){
+    public MariaDBConnection(AppCompatActivity mAppCompatActivity){
         mQueue = Volley.newRequestQueue(mAppCompatActivity);
         this.mAppCompatActivity = mAppCompatActivity;
 
@@ -33,7 +33,7 @@ public class MariaDBConnection {
     }
 
 
-    interface Callback {
+    public interface Callback {
         void onResponse(String result);
         void onErrorResponse(VolleyError error);
     }

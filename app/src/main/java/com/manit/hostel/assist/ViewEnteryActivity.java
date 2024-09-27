@@ -7,14 +7,17 @@ import static com.manit.hostel.assist.adapters.EntriesAdapter.EXIT_ONLY_FILTER;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.android.volley.VolleyError;
 import com.google.android.material.button.MaterialButton;
 import com.manit.hostel.assist.adapters.EntriesAdapter;
 import com.manit.hostel.assist.data.Entries;
+import com.manit.hostel.assist.database.MariaDBConnection;
 import com.manit.hostel.assist.databinding.ActivityViewEntriesBinding;
 
 import java.text.SimpleDateFormat;
@@ -139,13 +142,28 @@ public class ViewEnteryActivity extends AppCompatActivity {
 
     }
 
-    private ArrayList<Entries> fetchEntries(String macAddress, Date date) {
+    private ArrayList<Entries> fetchEntries(String hostelName, Date date) {
         ArrayList<Entries> entriesList = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             Entries entries = new Entries("Salmon Khan");
             entries.setEntryNo("24092024C"+i);
             entriesList.add(entries);
         }
+
+
+        MariaDBConnection dbConnection = new MariaDBConnection(this);
+        dbConnection.fetchEntryExitList(new MariaDBConnection.Callback() {
+            @Override
+            public void onResponse(String result) {
+                Log.e("list", result);
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
         return entriesList;
     }
 
