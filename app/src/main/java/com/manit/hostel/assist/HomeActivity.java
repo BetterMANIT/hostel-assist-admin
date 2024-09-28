@@ -35,7 +35,7 @@ public class HomeActivity extends AppCompatActivity {
         lb = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
         addClickLogic();
-        addClickLogicToViewEntries();
+
 
         final MariaDBConnection.Callback mCallback =new MariaDBConnection.Callback() {
             @Override
@@ -45,7 +45,7 @@ public class HomeActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(result);
                     JSONArray dataArray = jsonObject.getJSONArray("data");
                     setupHostelSpinner(jsonArrayToList(dataArray));
-
+                    addClickLogicToViewEntries();
                 } catch (JSONException e) {
                     onErrorResponse(e.getMessage());
                 }
@@ -79,6 +79,7 @@ public class HomeActivity extends AppCompatActivity {
         lb.classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(HomeActivity.this.toString(), "onItemSelected");
                 lb.viewEntries.setAlpha(1);
                 AppPref.setSelectedHostel(HomeActivity.this, parent.getItemAtPosition(position).toString());
                 lb.viewEntries.setEnabled(true);
