@@ -76,20 +76,14 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void addClickLogicToViewEntries() {
-        lb.classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        lb.classSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(HomeActivity.this.toString(), "onItemSelected");
                 lb.viewEntries.setAlpha(1);
                 AppPref.setSelectedHostel(HomeActivity.this, parent.getItemAtPosition(position).toString());
                 lb.viewEntries.setEnabled(true);
                 lb.viewEntries.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ViewEnteryActivity.class)));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                lb.viewEntries.setEnabled(false);
-                lb.viewEntries.setAlpha(0.5f);
             }
         });
     }
@@ -104,6 +98,7 @@ public class HomeActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         return dateFormat.format(date);
     }
+
     private void setupHostelSpinner(List<String> classes) {
         TextInputLayout mTextInputLayout = findViewById(R.id.spinner_hostel_select_text_input_layout);
         mTextInputLayout.setHint("Select Hostel");
