@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MANIT Hostel Assist</string>
+    <string name="scholar_no">Scholar No </string>
+    <string name="phone_no">Phone no</string>
+    <string name="name">Name</string>
+    <string name="room_no">Room no</string>
+    <string name="entry_already_exists">ENTRY ALREADY EXISTS</string>
+    <string name="hostel_name">Hostel name</string>
 </resources>

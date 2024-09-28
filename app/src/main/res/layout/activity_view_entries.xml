@@ -1,174 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/backspan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_bg_bottom"
-        android:elevation="10dp">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageButton
-                android:id="@+id/backbtn"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center|left"
-                android:layout_margin="20dp"
-                android:background="#00000000"
-                android:src="@drawable/arrow_back_ios_24dp_5f6368_fill0_wght400_grad0_opsz24"
-                android:tint="@color/white"
-                tools:ignore="UseAppTint" />
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:text="Entries"
-                android:textColor="@color/white"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:id="@id/search_bar"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:hint="Search...."
-                android:background="#FFE9FC">
-
-                <EditText
-                    android:id="@+id/searchtxt"
-                    android:hint="search..."
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autofillHints="emailAddress"
-                    android:textColor="@color/color1"
-                    android:padding="10dp"
-                    android:background="@color/color2_light"
-                    android:inputType="textEmailAddress"/>
-            </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/search_btn"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center|right"
-                android:layout_margin="20dp"
-                android:background="#00000000"
-                android:src="@drawable/search"
-                android:tint="@color/white"
-                tools:ignore="UseAppTint" />
-        </FrameLayout>
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_bg_bottom"
-        android:backgroundTint="@color/color2_light"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingTop="30dp"
-        android:paddingBottom="10dp"
-        android:translationY="-20dp">
-
-        <TextView
-            android:id="@+id/hostel_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hostel : 10-C"
-            android:textColor="@color/color3"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Date : 22-09-2024"
-            android:textColor="@color/color2"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Exit : 1200       Entered : 50        "
-            android:textColor="@color/color1"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/all_filter"
-            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/color1"
-            android:padding="4dp"
-            android:text="All"
-            android:textColor="@color/white"
-            android:textSize="10sp" />
-
-        <View
-            android:layout_width="10dp"
-            android:layout_height="0dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/exit_only_filter"
-            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/color2_light"
-            android:padding="4dp"
-            android:text="Exit only"
-            android:textColor="@color/color1"
-            android:textSize="10sp" />
-
-        <View
-            android:layout_width="10dp"
-            android:layout_height="0dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/entered"
-            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/color2_light"
-            android:padding="4dp"
-            android:text="Entered"
-            android:textColor="@color/color1"
-            android:textSize="10sp" />
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/students_list_recyclerview"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/student_view" />
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/backspan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg_bottom"
+            android:elevation="10dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/backbtn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center|left"
+                    android:layout_margin="20dp"
+                    android:background="#00000000"
+                    android:src="@drawable/arrow_back_ios_24dp_5f6368_fill0_wght400_grad0_opsz24"
+                    android:tint="@color/white"
+                    tools:ignore="UseAppTint" />
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="20dp"
+                    android:text="Entries"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:background="#FFE9FC"
+                    android:hint="Search....">
+
+                    <EditText
+                        android:id="@+id/searchtxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="emailAddress"
+                        android:background="@color/color2_light"
+                        android:hint="search..."
+                        android:inputType="textEmailAddress"
+                        android:padding="10dp"
+                        android:textColor="@color/color1" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/search_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center|right"
+                    android:layout_margin="20dp"
+                    android:background="#00000000"
+                    android:src="@drawable/search"
+                    android:tint="@color/white"
+                    tools:ignore="UseAppTint" />
+            </FrameLayout>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg_bottom"
+            android:backgroundTint="@color/color2_light"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingTop="30dp"
+            android:paddingBottom="10dp"
+            android:translationY="-20dp">
+
+            <TextView
+                android:id="@+id/hostel_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hostel : 10-C"
+                android:textColor="@color/color3"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Date : 22-09-2024"
+                android:textColor="@color/color2"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Exit : 1200       Entered : 50        "
+                android:textColor="@color/color1"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/all_filter"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/color1"
+                android:padding="4dp"
+                android:text="All"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/exit_only_filter"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/color2_light"
+                android:padding="4dp"
+                android:text="Exit only"
+                android:textColor="@color/color1"
+                android:textSize="10sp" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/entered"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/color2_light"
+                android:padding="4dp"
+                android:text="Entered"
+                android:textColor="@color/color1"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/students_list_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/student_view" />
 
 
-</LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
+        android:clickable="true"
+        tools:srcCompat="@tools:sample/avatars"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        />
+</RelativeLayout>
