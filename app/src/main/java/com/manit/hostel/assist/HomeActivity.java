@@ -2,6 +2,7 @@ package com.manit.hostel.assist;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -9,10 +10,18 @@ import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.VolleyError;
+import com.google.android.material.textfield.TextInputLayout;
 import com.manit.hostel.assist.data.AppPref;
+import com.manit.hostel.assist.database.MariaDBConnection;
 import com.manit.hostel.assist.databinding.ActivityHomeBinding;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -27,9 +36,44 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(lb.getRoot());
         addClickLogic();
         addClickLogicToViewEntries();
-        setupHostelSpinner(Arrays.asList("Hostel 10CD","Hostel 4"));
+
+        final MariaDBConnection.Callback mCallback =new MariaDBConnection.Callback() {
+            @Override
+            public void onResponse(String result) {
+                Log.d(HomeActivity.this.toString(), "onResponse: " + result);
+                try{
+                    JSONObject jsonObject = new JSONObject(result);
+                    JSONArray dataArray = jsonObject.getJSONArray("data");
+                    setupHostelSpinner(jsonArrayToList(dataArray));
+
+                } catch (JSONException e) {
+                    onErrorResponse(e.getMessage());
+                }
+            }
+
+            @Override
+            public void onErrorResponse(String error) {
+                Log.d(HomeActivity.this.toString(), "onError: " + error);
+
+            }
+
+
+        };
+        new MariaDBConnection(this).get_list_of_hostel_names(mCallback);
+
         lb.date.setText(getDateFormated());
     }
+
+    @NonNull
+    public static List<String> jsonArrayToList(JSONArray jsonArray) throws JSONException {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            list.add(jsonArray.getString(i));
+        }
+        return list;
+    }
+
 
     private void addClickLogicToViewEntries() {
         lb.classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -60,6 +104,9 @@ public class HomeActivity extends AppCompatActivity {
         return dateFormat.format(date);
     }
     private void setupHostelSpinner(List<String> classes) {
+        TextInputLayout mTextInputLayout = findViewById(R.id.spinner_hostel_select_text_input_layout);
+        mTextInputLayout.setHint("Select Hostel");
+        mTextInputLayout.setEnabled(true);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, classes);
         lb.classSpinner.setAdapter(adapter);
     }

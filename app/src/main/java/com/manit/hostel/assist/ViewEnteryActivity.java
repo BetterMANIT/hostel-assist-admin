@@ -159,9 +159,11 @@ public class ViewEnteryActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onErrorResponse(String error) {
 
             }
+
+
         });
 
         return entriesList;
