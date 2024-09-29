@@ -3,8 +3,11 @@ package com.manit.hostel.assist;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(lb.getRoot());
         addClickLogic();
         addDatesToDateSelectionSpinner();
+        addCheckbox();
 
         final MariaDBConnection.Callback mCallback =new MariaDBConnection.Callback() {
             @Override
@@ -57,13 +61,24 @@ public class HomeActivity extends AppCompatActivity {
         };
         new MariaDBConnection(this).get_list_of_hostel_names(mCallback);
         setUpViewEntryButton();
-//        lb.date.setText(getDateFormated());
+//        lb.date.setText(getDateFormatted());
 
+    }
+
+    private void addCheckbox() {
+        final CheckBox mDateSelectionRangeCheckbox = findViewById(R.id.enable_date_selection_range_checkbox);
+        mDateSelectionRangeCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked) {
+                findViewById(R.id.from_date_selection).setVisibility(View.VISIBLE);
+            }else{
+                findViewById(R.id.from_date_selection).setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setUpViewEntryButton() {
         lb.viewEntries.setOnClickListener(v -> {
-            final AutoCompleteTextView mDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_date_selection);
+            final AutoCompleteTextView mDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_to_date_selection);
             final AutoCompleteTextView mHostelSelectionAutoCompleteTextView = findViewById(R.id.hostel_selection_spinner);
 
             if(mHostelSelectionAutoCompleteTextView.getText().toString().equals("")){
@@ -83,7 +98,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private void addDatesToDateSelectionSpinner() {
 
-        final AutoCompleteTextView mDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_date_selection);
+        final AutoCompleteTextView mToDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_to_date_selection);
+        final AutoCompleteTextView mFromDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_to_date_selection);
+
         final List<String> dateList = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -96,8 +113,15 @@ public class HomeActivity extends AppCompatActivity {
             calendar.add(Calendar.DATE, -1);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, dateList);
-        mDateSelectionAutoCompleteTextView.setAdapter(adapter);
-        mDateSelectionAutoCompleteTextView.setText(dateList.get(0), false); // false to not show dropdown
+        mToDateSelectionAutoCompleteTextView.setAdapter(adapter);
+        mToDateSelectionAutoCompleteTextView.setText(dateList.get(0), false); // false to not show dropdown
+
+
+        mFromDateSelectionAutoCompleteTextView.setAdapter(adapter);
+        mFromDateSelectionAutoCompleteTextView.setText(dateList.get(0), false); // false to not show dropdown
+
+
+
     }
 
     @NonNull

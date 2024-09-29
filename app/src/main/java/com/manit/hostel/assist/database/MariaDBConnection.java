@@ -25,19 +25,19 @@ public class MariaDBConnection {
 
 
     private static final String BASE_URL = "http://4.186.57.254/API/";
-    String URL_SUFFIX_GET_LIST_OF_HOSTEL_NAMES = "get_list_of_hostel_names.php";
-    String URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME = "fetch_all_entries_by_table_name.php";
+    String URL_SUFFIX_GET_LIST_OF_HOSTEL_NAMES = "guard/get_list_of_hostel_names.php";
+    String URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME = "guard/fetch_all_entries_by_table_name.php";
     String URL_SUFFIX_GET_STUDENT_INFO = "get_student_info.php";
     String URL_SUFFIX_ADD_STUDENT_ENTRY = "open_new_entry.php";
     String URL_SUFFIX_CLOSE_STUDENT_ENTRY = "close_already_existing_entry.php";
-    String URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE = "check_if_new_update_in_db_table.php";
+    String URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE = "guard/check_if_new_update_in_db_table.php";
 
 
     final String KEY_SUCCESS_STATUS_CODE = "success";
     final String KEY_ERROR_STATUS_CODE = "error";
 
     private final RequestQueue mQueue;
-    private AppCompatActivity mAppCompatActivity;
+    private final AppCompatActivity mAppCompatActivity;
     public MariaDBConnection(AppCompatActivity mAppCompatActivity){
         mQueue = Volley.newRequestQueue(mAppCompatActivity);
         this.mAppCompatActivity = mAppCompatActivity;
@@ -96,10 +96,8 @@ public class MariaDBConnection {
 
         final StringRequest mStringRequest = new StringRequest(Request.Method.GET,BASE_URL_PLUS_SUFFIX , (Response.Listener<String>) response -> {handleCallBackResponse(callback, response);}, (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
         mQueue.add(mStringRequest);
-
-
-
     }
+
     public void add_entry_student(long scholar_no,
                                   String name,
                                   int room_no,
@@ -130,13 +128,11 @@ public class MariaDBConnection {
             }
             @Override
             public String getBodyContentType() {
-                return "application/x-www-form-urlencoded; charset=UTF-8";  // Proper content type for sending form data
+                return "application/x-www-form-urlencoded; charset=UTF-8";
             }
         };
 
         mQueue.add(mStringRequest);
-
-
     }
 
     public void close_entry_student(String scholar_no, Callback callback){
@@ -155,7 +151,7 @@ public class MariaDBConnection {
             }
             @Override
             public String getBodyContentType() {
-                return "application/x-www-form-urlencoded; charset=UTF-8";  // Proper content type for sending form data
+                return "application/x-www-form-urlencoded; charset=UTF-8";
             }
         };
 
