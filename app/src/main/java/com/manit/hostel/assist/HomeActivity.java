@@ -57,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
         };
         new MariaDBConnection(this).get_list_of_hostel_names(mCallback);
         setUpViewEntryButton();
-        lb.date.setText(getDateFormated());
+//        lb.date.setText(getDateFormated());
 
     }
 

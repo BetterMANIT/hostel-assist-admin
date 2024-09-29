@@ -87,28 +87,38 @@
             android:background="@drawable/rounded_bg_bottom"
             android:backgroundTint="@color/color2_light"
             android:orientation="vertical"
-            android:paddingLeft="20dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:paddingTop="30dp"
             android:paddingBottom="10dp"
-            android:translationY="-20dp">
+            android:layout_marginTop="-20dp"
+            >
 
-            <TextView
-                android:id="@+id/hostel_name"
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Hostel : 10-C"
-                android:textColor="@color/color3"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/hostel_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hostel : 10-C"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Date : 22-09-2024"
-                android:textColor="@color/color2"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:layout_weight="1"
+
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Date : 22-09-2024"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -122,19 +132,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/students_out_of_hostel"
-                    android:textColor="@color/color1"
-                    android:textSize="16sp"
+                    android:textColor="#7A0000"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
                 <TextView
-                    android:singleLine="true"
                     android:layout_weight="1"
                     android:maxLines="2"
                     android:id="@+id/students_back_in_hostel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/students_back_in_hostel"
-                    android:textColor="@color/color1"
-                    android:textSize="16sp"
+                    android:textColor="#005F0E"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
 
@@ -192,6 +201,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+
             android:id="@+id/students_list_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -204,13 +214,27 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-
         android:layout_alignParentRight="true"
             android:layout_height="wrap_content"
+        android:src="@drawable/round_pause_24"
+
+        android:layout_above="@id/extended_fab"
         android:clickable="true"
-        tools:srcCompat="@drawable/round_add_24"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="48dp"
+        tools:srcCompat="@drawable/round_pause_24"
+        android:layout_marginEnd="16dp"
         />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/extended_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+
+        android:layout_gravity="bottom|right"
+        android:contentDescription="@string/extended_fab_content_desc"
+        android:text="@string/add_manual_entry"
+        app:icon="@drawable/round_add_24"/>
+
 </RelativeLayout>

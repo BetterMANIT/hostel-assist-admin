@@ -5,12 +5,16 @@ import static com.manit.hostel.assist.adapters.EntriesAdapter.ENTERED_FILTER;
 import static com.manit.hostel.assist.adapters.EntriesAdapter.EXIT_ONLY_FILTER;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,12 +27,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.manit.hostel.assist.adapters.EntriesAdapter;
+import com.manit.hostel.assist.data.AppPref;
 import com.manit.hostel.assist.data.Entries;
 import com.manit.hostel.assist.database.MariaDBConnection;
 import com.manit.hostel.assist.databinding.ActivityViewEntriesBinding;
@@ -39,8 +44,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Set;
 
 public class ViewEntryActivity extends AppCompatActivity {
     ActivityViewEntriesBinding lb;
@@ -50,6 +56,7 @@ public class ViewEntryActivity extends AppCompatActivity {
     private boolean searchEnable = false;
     private TextView mStudentsBackInHostel, mStudentsOutOfHostel;
 
+    private MariaDBConnection mMariaDBConnection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,15 +65,17 @@ public class ViewEntryActivity extends AppCompatActivity {
         mStudentsOutOfHostel = findViewById(R.id.students_out_of_hostel_textview);
         mStudentsBackInHostel = findViewById(R.id.students_back_in_hostel);
 
+        this.mMariaDBConnection = new MariaDBConnection(this);
+
 
         if(getIntent().hasExtra(INTENT_KEY_HOSTEL_NAME))
-            lb.hostelName.setText(getIntent().getStringExtra(INTENT_KEY_HOSTEL_NAME)); // Set the hostel name
+            lb.hostelName.setText(getString(R.string.hostel_name) + " : " + getIntent().getStringExtra(INTENT_KEY_HOSTEL_NAME)); // Set the hostel name
         if(getIntent().hasExtra(INTENT_KEY_DATE))
          lb.date.setText(getIntent().getStringExtra(INTENT_KEY_DATE));  // Set the date
         lb.studentsListRecyclerview.post(() -> lb.studentsListRecyclerview.setLayoutManager(new LinearLayoutManager(this)));
         addClickLogicToFilters();
         addClickLogic();
-        addFloatingActionButton();
+        addExtendedFloatingActionButton();
         fetchAllEntriesFromDBAndUpdateRecyclerView();
         Log.d(ViewEntryActivity.class.getSimpleName(), "table name : " + getTableName());
 
@@ -96,9 +105,9 @@ public class ViewEntryActivity extends AppCompatActivity {
     }
 
 
-    private void addFloatingActionButton() {
-        final FloatingActionButton mFloatingActionButton = findViewById(R.id.floatingActionButton);
-        mFloatingActionButton.setOnClickListener(v -> showAddEntriesDialog());
+    private void addExtendedFloatingActionButton() {
+        final ExtendedFloatingActionButton mExtendedFloatingActionButton = findViewById(R.id.extended_fab);
+        mExtendedFloatingActionButton.setOnClickListener(v -> showAddEntriesDialog());
     }
     private void showAddEntriesDialog() {
         // Create a Dialog
@@ -146,7 +155,7 @@ public class ViewEntryActivity extends AppCompatActivity {
         // Set a click listener on the button
         buttonProceed.setOnClickListener(view -> {
             final String scholarNumber = editTextScholarNumber.getText().toString();
-            new MariaDBConnection(ViewEntryActivity.this).get_student_info(new MariaDBConnection.Callback() {
+            mMariaDBConnection.get_student_info(new MariaDBConnection.Callback() {
                 @Override
                 public void onResponse(String result) {
                     try{
@@ -199,9 +208,10 @@ public class ViewEntryActivity extends AppCompatActivity {
                             final String section = student_info.getString("section");
                             final String hostel_name = student_info.getString("hostel_name");
 
-                            new MariaDBConnection(ViewEntryActivity.this).add_entry_student(scholar_no, name, room_no, photo_url, phone_no, section, hostel_name, new MariaDBConnection.Callback() {
+                           mMariaDBConnection.add_entry_student(scholar_no, name, room_no, photo_url, phone_no, section, hostel_name, new MariaDBConnection.Callback() {
                                 @Override
                                 public void onResponse(String result) {
+                                    fetchAllEntriesFromDBAndUpdateRecyclerView();
                                     Toast.makeText(ViewEntryActivity.this, result, Toast.LENGTH_LONG).show();
                                 }
                                 @Override
@@ -216,9 +226,10 @@ public class ViewEntryActivity extends AppCompatActivity {
                         mCreateEntryButtonByScholarNo.setOnClickListener(v1 -> Toast.makeText(ViewEntryActivity.this, "In progress", Toast.LENGTH_LONG).show());
                         dialog.dismiss();
                    });
-                    mCloseEntryButtonByScholarNo.setOnClickListener(v ->{ new MariaDBConnection(ViewEntryActivity.this).close_entry_student(scholarNumber, new MariaDBConnection.Callback() {
+                    mCloseEntryButtonByScholarNo.setOnClickListener(v ->{ mMariaDBConnection.close_entry_student(scholarNumber, new MariaDBConnection.Callback() {
                         @Override
                         public void onResponse(String result) {
+                            fetchAllEntriesFromDBAndUpdateRecyclerView();
                             Toast.makeText(ViewEntryActivity.this, result, Toast.LENGTH_LONG).show();
                         }
 
@@ -244,9 +255,22 @@ public class ViewEntryActivity extends AppCompatActivity {
             // Example: Log.d("Scholar Number", scholarNumber);
 //            dialog.dismiss(); // Close the dialog
         });
+//        dialog.setOnShowListener(dialog1 -> {
+//        });
+
 
         // Show the dialog
         dialog.show();
+        editTextScholarNumber.requestFocus();
+        openKeyboard(editTextScholarNumber);
+
+    }
+
+    private void openKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
 
     private void addClickLogic() {
@@ -322,34 +346,53 @@ public class ViewEntryActivity extends AppCompatActivity {
 
 
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        updateRecyclerViewList(fetchEntries(new Date()));
-////        ArrayList<Entries> entriesList = fetchEntries(new Date());
-////        lb.status.setText("Exit : " + entriesList.size() + "       Entered : 50");
-////        if (entAdapter == null) {
-////            entAdapter = new EntriesAdapter(entriesList);
-////            lb.studentsListRecyclerview.setAdapter(entAdapter);
-////        } else {
-////            entAdapter.updateEntries(entriesList);
-////        }
-////        entAdapter.filterEntries(currentFilter);
-//
-//    }
+
+
+    private void check_for_updates_in_db_and_update_recyclerview_accordingly(){
+        Toast.makeText(this, "check_for_updates_in_db_and_update_recyclerview_accordingly", Toast.LENGTH_LONG).show();
+        mMariaDBConnection.check_if_new_update_in_table(new MariaDBConnection.Callback() {
+            @Override
+            public void onResponse(String result) {
+                try {
+                    final JSONObject responseObject = new JSONObject(result);
+                    // Extract the 'status' value
+                    String status = responseObject.getString("status");
+
+                    AppPref.setLastTimeTableFetchedUNIXTimestamp(ViewEntryActivity.this, getTableName(), responseObject.getLong("last_update") );
+
+                    // Extract the 'hasUpdates' value
+                    boolean hasUpdates = responseObject.getBoolean("hasUpdates");
+
+                    // Check if the status is 'success' and hasUpdates is true
+                    if ("success".equals(status) && hasUpdates) {
+                        fetchAllEntriesFromDBAndUpdateRecyclerView();
+                        System.out.println("Status is success, and there are updates.");
+                    } else {
+                        mPostDelayedHandler.removeCallbacks(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable);
+                        mPostDelayedHandler.postDelayed(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable, 10000);
+
+                        System.out.println("No updates available or status is not suc");
+                    }
+
+//                    Log.d(ViewEntryActivity.class.getSimpleName(), "Table updated : " +);
+                }catch (Exception e){}
+            }
+
+            @Override
+            public void onErrorResponse(String error) {
+
+            }
+        }, getTableName());
+
+    }
+
+   private final Handler mPostDelayedHandler = new Handler();
+    private final Runnable mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable = () -> check_for_updates_in_db_and_update_recyclerview_accordingly();
 
 
     private void fetchAllEntriesFromDBAndUpdateRecyclerView() {
-//        ArrayList<Entries> entriesList = new ArrayList<>();
-//        for (int i = 0; i < 100; i++) {
-//            Entries entries = new Entries("Salmon Khan");
-//            entries.setEntryNo("24092024C"+i);
-//            entriesList.add(entries);
-//        }
 
-
-        MariaDBConnection dbConnection = new MariaDBConnection(this);
-        dbConnection.fetchEntryExitList(new MariaDBConnection.Callback() {
+        mMariaDBConnection.fetchEntryExitList(new MariaDBConnection.Callback() {
             @Override
             public void onResponse(String result) {
                 Log.d(ViewEntryActivity.class.getSimpleName(), result.toString());
@@ -359,7 +402,7 @@ public class ViewEntryActivity extends AppCompatActivity {
                 final JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
                 final JsonArray dataArray = jsonObject.getAsJsonArray("data");
 
-                for (int i = 0; i < dataArray.size(); i++) {
+                for (int i = dataArray.size()-1; i > 0 ; i--) {
                     JsonObject entryObject = dataArray.get(i).getAsJsonObject();
 
                     String entryNo = entryObject.get("id").getAsString();
@@ -367,13 +410,16 @@ public class ViewEntryActivity extends AppCompatActivity {
                     String roomNo = entryObject.get("room_no").getAsString();
                     String scholarNo = entryObject.get("scholar_no").getAsString();
                     String exitTime = entryObject.get("open_time").getAsString();
-                    String entryTime = null;
+                    String entryTime = "";
                     if(!entryObject.get("close_time").isJsonNull())
                         entryTime = entryObject.get("close_time").getAsString();
                     String photoURL = entryObject.get("photo_url").getAsString();
 
                     entriesList.add(new Entries(entryNo, name, roomNo, scholarNo, exitTime, entryTime, photoURL));
                 }
+
+                mPostDelayedHandler.removeCallbacks(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable);
+                mPostDelayedHandler.postDelayed(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable, 10000);
                 updateRecyclerViewList(entriesList);
 
             }
@@ -396,25 +442,30 @@ public class ViewEntryActivity extends AppCompatActivity {
             entAdapter.updateEntries(entriesList);
         }
         entAdapter.filterEntries(currentFilter);
-        int countOfStudentsInHostel = getCountOfStudentsInBacKHostel(entriesList);
+        Integer[] countOfStudentsInHostel = getCountOfStudentsInBacKHostel(entriesList);
         if(mStudentsBackInHostel !=null)
-            mStudentsBackInHostel.setText(getString(R.string.students_back_in_hostel) + " : " + countOfStudentsInHostel);
+            mStudentsBackInHostel.setText(getString(R.string.students_back_in_hostel) + " : " + countOfStudentsInHostel[0]);
         if(mStudentsOutOfHostel!=null)
-            mStudentsOutOfHostel.setText(getString(R.string.students_out_of_hostel) + " : " + (entriesList.size() - countOfStudentsInHostel));
+            mStudentsOutOfHostel.setText(getString(R.string.students_out_of_hostel) + " : " + countOfStudentsInHostel[1]);
 
     }
 
-    private int getCountOfStudentsInBacKHostel(ArrayList<Entries> entriesList){
+    private Integer[] getCountOfStudentsInBacKHostel(ArrayList<Entries> entriesList){
         if(entAdapter==null)
-            return -1;
+            return new Integer[]{-1,-1};
 
-        final AtomicInteger studentsInHostel = new AtomicInteger();
+        Set<String> scholarNoSetBackInHostel = new HashSet<>();
+        Set<String> scholarNoSetOutsideOfHostel = new HashSet<>();
         entriesList.forEach(entries -> {
-            if(entries.isBackInHostel())
-                studentsInHostel.getAndIncrement();
+            if(entries.isBackInHostel() && !scholarNoSetOutsideOfHostel.contains(entries.getEntryNo())) {
+                scholarNoSetBackInHostel.add(entries.getScholarNo());
+            }else if(!scholarNoSetBackInHostel.contains(entries.getEntryNo())){
+                scholarNoSetOutsideOfHostel.add(entries.getScholarNo());
+            }
+
         });
 
-        return studentsInHostel.get();
+        return new Integer[]{scholarNoSetBackInHostel.size(), scholarNoSetOutsideOfHostel.size()};
     }
 
 

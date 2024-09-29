@@ -11,6 +11,8 @@ import com.manit.hostel.assist.R;
 import com.manit.hostel.assist.data.Entries;
 import com.manit.hostel.assist.databinding.StudentViewBinding;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -25,11 +27,13 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
 
     private ArrayList<Entries> originalEntriesList;
     private ArrayList<Entries> filteredEntriesList;
+    private String todaysDateStringInYYYY_MM_DD = "";
 
     // Constructor to accept the list
     public EntriesAdapter(ArrayList<Entries> entriesList) {
         this.originalEntriesList = new ArrayList<>(entriesList);
         this.filteredEntriesList = new ArrayList<>(entriesList);
+        this.todaysDateStringInYYYY_MM_DD = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
 
@@ -46,14 +50,15 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
     public void onBindViewHolder(@NonNull EntriesViewHolder holder, int position) {
         // Get current entry from the filtered list
         Entries currentEntry = filteredEntriesList.get(position);
-        holder.binding.index.setText(String.valueOf(position + 1));
+        holder.binding.index.setText(String.valueOf(getOriginalEntriesList().size() - position));
         // Bind data to the views using the binding object
 //        holder.binding.entryNo.setText("Entry No. - " + currentEntry.getEntryNo());
         holder.binding.name.setText("Name: " + currentEntry.getName());
         holder.binding.roomNo.setText("Room No: " + currentEntry.getRoomNo());
         holder.binding.scholarNo.setText("Scholar No. - " + currentEntry.getScholarNo());
-        holder.binding.exitTime.setText(currentEntry.getExitTime());
-        holder.binding.entryTime.setText(currentEntry.getEntryTime());
+
+        holder.binding.exitTime.setText(currentEntry.getExitTime().replace(todaysDateStringInYYYY_MM_DD,""));
+        holder.binding.entryTime.setText(currentEntry.getEntryTime().replace(todaysDateStringInYYYY_MM_DD,""));
         Glide.with(holder.binding.getRoot().getContext())
                 .load(currentEntry.getPhotoURL())
                 .placeholder(R.drawable.demo_pic1)

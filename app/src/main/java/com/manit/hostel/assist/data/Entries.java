@@ -5,7 +5,7 @@ public class Entries {
     private String roomNo;
     private String scholarNo;
     private String exitTime;
-    private String entryTime;
+    private String entryTime = "";
 
     public boolean isBackInHostel() {
         return isBackInHostel;

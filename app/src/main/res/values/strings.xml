@@ -9,4 +9,6 @@
     <string name="select_a_hostel">Select a hostel first</string>
     <string name="students_out_of_hostel">Students out of hostel</string>
     <string name="students_back_in_hostel">Students back in hostel</string>
+    <string name="add_manual_entry">Add manual entry</string>
+    <string name="extended_fab_content_desc">You can add manual entry by scholar no.</string>
 </resources>

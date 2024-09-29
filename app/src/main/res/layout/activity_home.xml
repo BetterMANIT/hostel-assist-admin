@@ -104,39 +104,40 @@
                 android:paddingStart="50dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date"
-            android:textColor="#AB2A295E"
-            android:textSize="12sp"
-            android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="22 - 09 - 2024"
-            android:textColor="@color/color1"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Date"-->
+<!--            android:textColor="#AB2A295E"-->
+<!--            android:textSize="12sp"-->
+<!--            android:textStyle="bold" />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total Entry/Exit"
-            android:textColor="#AB2A295E"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+<!--        <TextView-->
+<!--            android:id="@+id/date"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="22 - 09 - 2024"-->
+<!--            android:textColor="@color/color1"-->
+<!--            android:textSize="26sp"-->
+<!--            android:textStyle="bold" />-->
 
-        <TextView
-            android:id="@+id/entries_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0/0"
-            android:textColor="@color/color1"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Total Entry/Exit"-->
+<!--            android:textColor="#AB2A295E"-->
+<!--            android:textSize="12sp"-->
+<!--            android:textStyle="bold" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/entries_status"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="0/0"-->
+<!--            android:textColor="@color/color1"-->
+<!--            android:textSize="26sp"-->
+<!--            android:textStyle="bold" />-->
 
     </LinearLayout>
 

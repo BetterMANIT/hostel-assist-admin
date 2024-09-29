@@ -9,14 +9,17 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.manit.hostel.assist.data.AppPref;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class MariaDBConnection {
 
@@ -27,6 +30,8 @@ public class MariaDBConnection {
     String URL_SUFFIX_GET_STUDENT_INFO = "get_student_info.php";
     String URL_SUFFIX_ADD_STUDENT_ENTRY = "open_new_entry.php";
     String URL_SUFFIX_CLOSE_STUDENT_ENTRY = "close_already_existing_entry.php";
+    String URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE = "check_if_new_update_in_db_table.php";
+
 
     final String KEY_SUCCESS_STATUS_CODE = "success";
     final String KEY_ERROR_STATUS_CODE = "error";
@@ -80,6 +85,21 @@ public class MariaDBConnection {
 
 
 
+    public void check_if_new_update_in_table(Callback callback, String table_name) {
+
+//        final RequestFuture<String> future = RequestFuture.newFuture();
+
+        final String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE+"?table_name="+table_name + "&last_update=" +AppPref.getLastTimeTableFetchedUNIXTimestamp(mAppCompatActivity, table_name) ;
+        Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
+
+//        final StringRequest mStringRequests = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, future, future);
+
+        final StringRequest mStringRequest = new StringRequest(Request.Method.GET,BASE_URL_PLUS_SUFFIX , (Response.Listener<String>) response -> {handleCallBackResponse(callback, response);}, (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        mQueue.add(mStringRequest);
+
+
+
+    }
     public void add_entry_student(long scholar_no,
                                   String name,
                                   int room_no,
