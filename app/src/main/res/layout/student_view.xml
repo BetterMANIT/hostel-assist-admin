@@ -13,6 +13,7 @@
 
 
         <ImageView
+            android:id="@+id/student_imageview"
             android:layout_width="100dp"
             android:layout_height="150dp"
             android:scaleType="fitCenter"
@@ -36,14 +37,6 @@
         android:orientation="vertical"
         android:padding="14dp">
 
-        <TextView
-            android:id="@+id/entry_no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Entry No. - 23092024C1"
-            android:textColor="#000000"
-            android:textSize="12sp"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/name"
@@ -51,7 +44,6 @@
             android:layout_height="wrap_content"
             android:text="Name : Lorem Ipsum"
             android:textColor="#000000"
-            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
@@ -60,7 +52,6 @@
             android:layout_height="wrap_content"
             android:text="Room no : 10C103"
             android:textColor="#000000"
-            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
@@ -69,7 +60,6 @@
             android:layout_height="wrap_content"
             android:text="Scholar No. - 241100112233"
             android:textColor="#000000"
-            android:textSize="12sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -98,6 +88,7 @@
                     android:layout_height="wrap_content"
                     android:text="11:14 AM"
                     android:textColor="#000000"
+                    android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -122,6 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="03:45 PM"
+                    android:textAlignment="center"
                     android:textColor="#000000"
                     android:textSize="14sp"
                     android:textStyle="bold" />

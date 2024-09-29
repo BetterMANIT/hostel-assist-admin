@@ -6,4 +6,7 @@
     <string name="room_no">Room no</string>
     <string name="entry_already_exists">ENTRY ALREADY EXISTS</string>
     <string name="hostel_name">Hostel name</string>
+    <string name="select_a_hostel">Select a hostel first</string>
+    <string name="students_out_of_hostel">Students out of hostel</string>
+    <string name="students_back_in_hostel">Students back in hostel</string>
 </resources>

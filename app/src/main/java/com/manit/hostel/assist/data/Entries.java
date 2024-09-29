@@ -7,14 +7,34 @@ public class Entries {
     private String exitTime;
     private String entryTime;
 
+    public boolean isBackInHostel() {
+        return isBackInHostel;
+    }
+
+    private boolean isBackInHostel = true;
+
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    private String photoURL;
+
     // Constructor
-    public Entries(String entryNo, String name, String roomNo, String scholarNo, String exitTime, String entryTime) {
+    public Entries(String entryNo,
+                   String name,
+                   String roomNo,
+                   String scholarNo,
+                   String exitTime,
+                   String entryTime,
+                   String photoURL) {
         this.entryNo = entryNo;
         this.name = name;
         this.roomNo = roomNo;
         this.scholarNo = scholarNo;
         this.exitTime = exitTime;
+        isBackInHostel = !(entryTime == null || entryTime.isEmpty());
         this.entryTime = entryTime;
+        this.photoURL = photoURL;
     }
 
     public Entries(String name) {
@@ -24,6 +44,7 @@ public class Entries {
         this.scholarNo = "241100112233";
         this.exitTime = "11:14 AM";
         this.entryTime = "";
+        this.photoURL = "https://fadcdn.s3.ap-south-1.amazonaws.com/media/1216/Lead_image_57701.jpg";
     }
 
     // Getters and Setters

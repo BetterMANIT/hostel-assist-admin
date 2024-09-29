@@ -78,6 +78,7 @@
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:focusable="false"
+
                 android:inputType="none"
                 android:paddingStart="50dp" />
         </com.google.android.material.textfield.TextInputLayout>

@@ -30,7 +30,7 @@
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".ViewEnteryActivity"
+            android:name=".ViewEntryActivity"
             android:exported="false" />
     </application>
 

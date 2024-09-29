@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.manit.hostel.assist.R;
 import com.manit.hostel.assist.data.Entries;
 import com.manit.hostel.assist.databinding.StudentViewBinding;
 
@@ -16,6 +18,11 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
     public static final int ALL_FILTER = 1;
     public static final int EXIT_ONLY_FILTER = 2;
     public static final int ENTERED_FILTER = 3;
+
+    public ArrayList<Entries> getOriginalEntriesList() {
+        return originalEntriesList;
+    }
+
     private ArrayList<Entries> originalEntriesList;
     private ArrayList<Entries> filteredEntriesList;
 
@@ -41,12 +48,18 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
         Entries currentEntry = filteredEntriesList.get(position);
         holder.binding.index.setText(String.valueOf(position + 1));
         // Bind data to the views using the binding object
-        holder.binding.entryNo.setText("Entry No. - " + currentEntry.getEntryNo());
+//        holder.binding.entryNo.setText("Entry No. - " + currentEntry.getEntryNo());
         holder.binding.name.setText("Name: " + currentEntry.getName());
         holder.binding.roomNo.setText("Room No: " + currentEntry.getRoomNo());
         holder.binding.scholarNo.setText("Scholar No. - " + currentEntry.getScholarNo());
         holder.binding.exitTime.setText(currentEntry.getExitTime());
         holder.binding.entryTime.setText(currentEntry.getEntryTime());
+        Glide.with(holder.binding.getRoot().getContext())
+                .load(currentEntry.getPhotoURL())
+                .placeholder(R.drawable.demo_pic1)
+                .error(R.drawable.baseline_error_24)
+                .into(holder.binding.studentImageview);
+
     }
 
     @Override
