@@ -159,6 +159,7 @@ public class HomeActivity extends AppCompatActivity {
         mHostelSelectionSpinnerAutoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
             Log.d(HomeActivity.this.toString(), "onItemSelected");
             lb.viewEntries.setAlpha(1);
+            lb.viewEntries.setEnabled(true);
             AppPref.setSelectedHostel(HomeActivity.this, parent.getItemAtPosition(position).toString());
             lb.viewEntries.setEnabled(true);
         });

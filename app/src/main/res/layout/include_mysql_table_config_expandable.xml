@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TABLE NAME"
+        android:textColor="#AB2A295E"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutMYSQLDBTableName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextMYSQLDBTableName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="daily_class_entry"
+            android:focusable="true"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <CheckBox
+        android:layout_marginTop="10dp"
+        android:id="@+id/create_new_table_for_each_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_new_table_for_each_day"/>
+
+    <CheckBox
+        android:layout_marginTop="10dp"
+
+        android:id="@+id/create_new_table_for_each_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_new_table_for_each_month"/>
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VARIABLE TABLE NAME SUFFIX"
+        android:textColor="#AB2A295E"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutMYSQLDBVariableTableNameSuffix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextMYSQLDBVariableTableNameSuffix"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="{variables}"
+            android:focusable="true"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>
+

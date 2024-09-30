@@ -33,4 +33,7 @@ public class AppPref {
         Log.d(AppPref.class.getSimpleName(), "Table name : " + table_name + ", last update : " + last_update);
     }
 
+    public static String getUsername(Context mContext) {
+        return "guard";
+    }
 }

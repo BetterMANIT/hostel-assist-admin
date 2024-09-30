@@ -3,6 +3,7 @@ package com.manit.hostel.assist.database;
 import android.telecom.Call;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -14,6 +15,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.manit.hostel.assist.data.AppPref;
 
+import org.jetbrains.annotations.Contract;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +31,7 @@ public class MariaDBConnection {
     String URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME = "guard/fetch_all_entries_by_table_name.php";
     String URL_SUFFIX_GET_STUDENT_INFO = "get_student_info.php";
     String URL_SUFFIX_ADD_STUDENT_ENTRY = "open_new_entry.php";
+    String URL_SUFFIX_CREATE_ENTRY_CATEGORY_IN_A_HOSTEL = "guard/create_entry_category_in_a_hostel.php";
     String URL_SUFFIX_CLOSE_STUDENT_ENTRY = "close_already_existing_entry.php";
     String URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE = "guard/check_if_new_update_in_db_table.php";
 
@@ -134,6 +137,45 @@ public class MariaDBConnection {
 
         mQueue.add(mStringRequest);
     }
+
+    public void create_new_category_in_a_hostel(String category_name,
+                                                String constant_table_name,
+                                    String variable_table_name_suffix,
+                                    String hostel_name,
+                                    String created_by,
+                                    Callback callback){
+
+        Log.d("create_new_category_in_a_hostel", "variable_table_name_suffix : " + variable_table_name_suffix);
+
+        final String BASE_URL_PLUS_SUFFIX = BASE_URL+URL_SUFFIX_CREATE_ENTRY_CATEGORY_IN_A_HOSTEL;
+        Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
+
+        final StringRequest mStringRequest = new StringRequest(Request.Method.POST, BASE_URL_PLUS_SUFFIX,
+                (Response.Listener<String>) response -> handleCallBackResponse(callback, response),
+                (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage())) {
+
+            // Override getParams() to send POST parameters
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("constant_table_name", constant_table_name);
+                params.put("variable_table_name_suffix", variable_table_name_suffix);
+                params.put("hostel_name", hostel_name);
+                params.put("created_by", created_by);
+                params.put("category_name", category_name);
+                return params;
+            }
+            @NonNull
+            @Contract(pure = true)
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
+
+        mQueue.add(mStringRequest);
+    }
+
 
     public void close_entry_student(String scholar_no, Callback callback){
 

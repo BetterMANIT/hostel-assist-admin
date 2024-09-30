@@ -1,6 +1,5 @@
 package com.manit.hostel.assist;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -17,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         lb = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
         lb.getRoot().postDelayed(()->{
-            Intent in = new Intent(getApplicationContext(),HomeActivity.class);
+            Intent in = new Intent(getApplicationContext(), CategoryCreationActivity.class);
             startActivity(in);
         },2000);
     }
