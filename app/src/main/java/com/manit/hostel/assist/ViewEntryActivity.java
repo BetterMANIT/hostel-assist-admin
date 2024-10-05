@@ -6,7 +6,6 @@ import static com.manit.hostel.assist.adapters.EntriesAdapter.EXIT_ONLY_FILTER;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -15,6 +14,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -38,6 +41,7 @@ import com.manit.hostel.assist.data.Entries;
 import com.manit.hostel.assist.database.MariaDBConnection;
 import com.manit.hostel.assist.databinding.ActivityViewEntriesBinding;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -45,8 +49,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ViewEntryActivity extends AppCompatActivity {
     ActivityViewEntriesBinding lb;
@@ -82,11 +88,25 @@ public class ViewEntryActivity extends AppCompatActivity {
     }
 
 
-    public static String INTENT_KEY_DATE = "date";
-    public static String INTENT_KEY_HOSTEL_NAME = "hostel_name";
+    public static String INTENT_KEY_DATE = "date",
+            INTENT_KEY_HOSTEL_NAME = "hostel_name",
+            INTENT_TABLE_NAME = "table_name",
+            INTENT_PURPOSE = "purpose";
 
+    @Nullable
+    private String getPurpose(){
+         if (getIntent().hasExtra(INTENT_PURPOSE)) {
+             Log.d(ViewEntryActivity.class.getSimpleName(), "purpose : " + getIntent().getStringExtra(INTENT_PURPOSE));
+
+             return getIntent().getStringExtra(INTENT_PURPOSE);
+         }
+         Log.d(ViewEntryActivity.class.getSimpleName(), "Purpose is null");
+         return null;
+    }
     @NonNull
     private String getTableName(){
+        if(true)
+           return  getIntent().getStringExtra(INTENT_TABLE_NAME);
         String DATE_MMYYYY = new SimpleDateFormat("MMyyyy", Locale.getDefault()).format(new Date());
         final String originalDateString = getIntent().getStringExtra(INTENT_KEY_DATE);
         final SimpleDateFormat originalFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -143,14 +163,30 @@ public class ViewEntryActivity extends AppCompatActivity {
         final TextView mPhoneNumberTextView = dialog.findViewById(R.id.phone_no);
         final TextView mRoomNoTextView = dialog.findViewById(R.id.room_no);
         final TextView mHostelNameTextView = dialog.findViewById(R.id.hostel_name);
+        final TextView mPurposeTextView = dialog.findViewById(R.id.purpose);
         final TextView mEntryAlreadyExists = dialog.findViewById(R.id.entry_already_exists);
         final TextView mEntryOpenTimeTextView = dialog.findViewById(R.id.entry_open_time);
         final Button mCreateEntryButtonByScholarNo = dialog.findViewById(R.id.create_entry_button);
         final Button mCloseEntryButtonByScholarNo = dialog.findViewById(R.id.close_entry_button);
+        final AutoCompleteTextView mCategorySelectionAutoCompleteTextView = dialog.findViewById(R.id.spinner_to_category_selection);
+        mCategorySelectionAutoCompleteTextView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mCreateEntryButtonByScholarNo.setAlpha(1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         final ImageView mStudentImageview = dialog.findViewById(R.id.student_imageview);
 
 
+        final boolean[] isCategoryDetailsLoaded = {false};
+
+        AtomicReference<String> table_name = new AtomicReference<>("");
 
         // Set a click listener on the button
         buttonProceed.setOnClickListener(view -> {
@@ -161,11 +197,54 @@ public class ViewEntryActivity extends AppCompatActivity {
                     try{
                         final JSONObject mJSONObject = new JSONObject(result);
                         final JSONObject student_info = mJSONObject.getJSONObject("data");
+                        Log.d(ViewEntryActivity.class.getSimpleName(), "student_info : " + student_info.toString());
+                        mMariaDBConnection.get_category_details_by_hostel_name(new MariaDBConnection.Callback() {
+                            @Override
+                            public void onResponse(String result) {
+                                try {
+
+                                    final JSONObject mJSONObject = new JSONObject(result);
+                                    final JSONArray category_name_with_table_name = mJSONObject.getJSONArray("data");
+
+                                    final List<String> mTableNameList = new ArrayList<>();
+                                    final List<String> mPurposeList = new ArrayList<>();
+
+                                    for (int i = 0; i < category_name_with_table_name.length(); i++) {
+                                        final JSONObject specific_table_info = category_name_with_table_name.getJSONObject(i);
+                                        String table_name = specific_table_info.getString("table_name");
+                                        String purpose = specific_table_info.getString("purpose");
+                                        mTableNameList.add(table_name);
+                                        mPurposeList.add(purpose);
+                                        Log.d(ViewEntryActivity.class.getSimpleName(), "Table name : " + table_name + "\nPurpose");
+                                    }
+                                    mCategorySelectionAutoCompleteTextView.setAdapter(new ArrayAdapter<>(
+                                            ViewEntryActivity.this,
+                                            android.R.layout.simple_dropdown_item_1line,
+                                            mPurposeList // Convert Collection to String[]
+                                    ));
+                                    mCategorySelectionAutoCompleteTextView.setOnItemClickListener((parent, view1, position, id) -> {
+                                        table_name.set(mTableNameList.get(position));
+                                        mCreateEntryButtonByScholarNo.setAlpha(1f);});
+                                    mCategorySelectionAutoCompleteTextView.showDropDown();
+                                    isCategoryDetailsLoaded[0] = true;
+
+                                }catch (Exception e){
+                                    onErrorResponse(e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onErrorResponse(String error) {
+                                Toast.makeText(ViewEntryActivity.this, "Error : " + error,Toast.LENGTH_LONG).show();
+
+                            }
+                        }, student_info.getString("hostel_name"));
                         mScholarNumberTextView.setText(getString(R.string.scholar_no) + " : " + scholarNumber);
                         mPhoneNumberTextView.setText(getString(R.string.phone_no) + " : " + String.valueOf(student_info.getInt("phone_no")));
                         mStudentNameTextView.setText(getString(R.string.name) + " : " + student_info.getString("name"));
                         mRoomNoTextView.setText(getString(R.string.room_no) + " : " + student_info.getInt("room_no"));
                         mHostelNameTextView.setText(getString(R.string.hostel_name) + " : " + student_info.getString("hostel_name"));
+                        mPurposeTextView.setText(getString(R.string.purpose) + " : " + student_info.getString("purpose"));
                         if(!student_info.isNull("entry_exit_table_name")){
                             Log.d(ViewEntryActivity.class.getSimpleName(),"entry exit table is not null");
                             mCreateEntryButtonByScholarNo.setVisibility(View.GONE);
@@ -173,11 +252,16 @@ public class ViewEntryActivity extends AppCompatActivity {
                             mCloseEntryButtonByScholarNo.setVisibility(View.VISIBLE);
                             mEntryOpenTimeTextView.setVisibility(View.VISIBLE);
                             mEntryOpenTimeTextView.setText(student_info.getString("entry_exit_table_name"));
+                            mPurposeTextView.setVisibility(View.VISIBLE);
+                            dialog.findViewById(R.id.spinner_purpose_selection_text_input_layout).setVisibility(View.GONE);
                         }else {
                             Log.d(ViewEntryActivity.class.getSimpleName(),"entry exit table is null");
                             mCreateEntryButtonByScholarNo.setVisibility(View.VISIBLE);
                             mCloseEntryButtonByScholarNo.setVisibility(View.GONE);
                             mEntryAlreadyExists.setVisibility(View.GONE);
+                            mPurposeTextView.setVisibility(View.GONE);
+                            dialog.findViewById(R.id.spinner_purpose_selection_text_input_layout).setVisibility(View.VISIBLE);
+
                         }
                         Glide.with(ViewEntryActivity.this)
                                 .load(student_info.getString("photo_url"))
@@ -195,8 +279,13 @@ public class ViewEntryActivity extends AppCompatActivity {
                     mEnterScholarNoLinearLayout.setVisibility(View.GONE);
 
 
+
                     mShowDetailsByScholarNoLinearLayout.setVisibility(View.VISIBLE);
                     mCreateEntryButtonByScholarNo.setOnClickListener(v -> {
+                        if(!isCategoryDetailsLoaded[0]){
+                            Toast.makeText(ViewEntryActivity.this, "Please wait for the purpose details to load", Toast.LENGTH_LONG).show();
+                            return;
+                        }
                         try{
                             final JSONObject mJSONObject = new JSONObject(result);
                             final JSONObject student_info = mJSONObject.getJSONObject("data");
@@ -208,7 +297,7 @@ public class ViewEntryActivity extends AppCompatActivity {
                             final String section = student_info.getString("section");
                             final String hostel_name = student_info.getString("hostel_name");
 
-                           mMariaDBConnection.add_entry_student(scholar_no, name, room_no, photo_url, phone_no, section, hostel_name, new MariaDBConnection.Callback() {
+                           mMariaDBConnection.add_entry_student(scholar_no, name, room_no, photo_url, phone_no, section, hostel_name, mCategorySelectionAutoCompleteTextView.getText().toString(), table_name.get(),AppPref.getUsername(ViewEntryActivity.this),new MariaDBConnection.Callback() {
                                 @Override
                                 public void onResponse(String result) {
                                     fetchAllEntriesFromDBAndUpdateRecyclerView();
@@ -382,7 +471,7 @@ public class ViewEntryActivity extends AppCompatActivity {
             public void onErrorResponse(String error) {
 
             }
-        }, getTableName());
+        }, getTableName(), getPurpose());
 
     }
 
@@ -430,7 +519,7 @@ public class ViewEntryActivity extends AppCompatActivity {
                 Log.d(ViewEntryActivity.class.getSimpleName(), error.toString());
 
             }
-        }, getTableName());
+        }, getTableName(), getPurpose());
 
     }
 

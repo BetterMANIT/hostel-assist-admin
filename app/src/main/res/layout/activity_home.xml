@@ -46,168 +46,220 @@
 
     </FrameLayout>
 
-    <LinearLayout
+    
+    <ScrollView
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LOCATION"
-            android:textColor="#AB2A295E"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/spinner_hostel_select_text_input_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginBottom="10dp"
-            android:hint="Loading.."
-            app:boxBackgroundColor="@color/color2_light"
-            app:endIconMode="dropdown_menu"
-            app:startIconDrawable="@drawable/hostel">
-
-            <AutoCompleteTextView
-                android:id="@+id/hostel_selection_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:focusable="false"
-
-                android:inputType="none"
-                android:paddingStart="50dp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TO DATE"
-            android:textColor="#AB2A295E"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/spinner_to_date_selection_text_input_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginBottom="10dp"
-            android:hint="Select date"
-            app:boxBackgroundColor="@color/color2_light"
-            app:endIconMode="dropdown_menu"
-            app:startIconDrawable="@drawable/baseline_date_range_24">
-
-            <AutoCompleteTextView
-                android:id="@+id/spinner_to_date_selection"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:focusable="false"
-                android:inputType="none"
-                android:paddingStart="50dp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
+        android:layout_height="0dp">
         <LinearLayout
-            android:visibility="gone"
             android:orientation="vertical"
-            android:id="@+id/from_date_selection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:visibility="visible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="FROM DATE"
-                android:textColor="#AB2A295E"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:visibility="visible"
-                android:id="@+id/spinner_from_date_selection_text_input_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginBottom="10dp"
-                android:hint="Select date"
-                app:boxBackgroundColor="@color/color2_light"
-                app:endIconMode="dropdown_menu"
-                app:startIconDrawable="@drawable/baseline_date_range_24">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                >
 
-                <AutoCompleteTextView
-                    android:id="@+id/spinner_from_date_selection"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LOCATION"
+                    android:textColor="#AB2A295E"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/spinner_hostel_select_text_input_layout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:inputType="none"
-                    android:paddingStart="50dp" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="70dp"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Loading.."
+                    app:boxBackgroundColor="@color/color2_light"
+                    app:endIconMode="dropdown_menu"
+                    app:startIconDrawable="@drawable/hostel">
 
+                    <AutoCompleteTextView
+                        android:id="@+id/hostel_selection_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:focusable="false"
+
+                        android:inputType="none"
+                        android:paddingStart="50dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PURPOSE"
+                    android:textColor="#AB2A295E"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/spinner_to_category_selection_text_input_layout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginBottom="10dp"
+                    app:boxBackgroundColor="@color/color2_light"
+                    app:endIconMode="dropdown_menu"
+                    app:startIconDrawable="@drawable/round_category_24">
+
+                    <AutoCompleteTextView
+                        android:text="@string/select_hostel_first"
+                        android:id="@+id/spinner_to_category_selection_autocomplete_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:paddingStart="50dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:orientation="vertical"
+                    android:id="@+id/from_date_selection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TO DATE"
+                    android:textColor="#AB2A295E"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/spinner_to_date_selection_text_input_layout"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_marginBottom="10dp"
+                        android:hint="Select date"
+                        app:boxBackgroundColor="@color/color2_light"
+                        app:endIconMode="dropdown_menu"
+                        app:startIconDrawable="@drawable/baseline_date_range_24">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/spinner_to_date_selection"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="50dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:visibility="visible"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FROM DATE"
+                        android:textColor="#AB2A295E"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:visibility="visible"
+                        android:id="@+id/spinner_from_date_selection_text_input_layout"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_marginBottom="10dp"
+                        android:hint="Select date"
+                        app:boxBackgroundColor="@color/color2_light"
+                        app:endIconMode="dropdown_menu"
+                        app:startIconDrawable="@drawable/baseline_date_range_24">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/spinner_from_date_selection"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:paddingStart="50dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/enable_date_selection_range_checkbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enable_date_range_selection_range"/>
+
+
+                <!--        <TextView-->
+                <!--            android:layout_width="wrap_content"-->
+                <!--            android:layout_height="wrap_content"-->
+                <!--            android:text="Date"-->
+                <!--            android:textColor="#AB2A295E"-->
+                <!--            android:textSize="12sp"-->
+                <!--            android:textStyle="bold" />-->
+
+                <!--        <TextView-->
+                <!--            android:id="@+id/date"-->
+                <!--            android:layout_width="wrap_content"-->
+                <!--            android:layout_height="wrap_content"-->
+                <!--            android:text="22 - 09 - 2024"-->
+                <!--            android:textColor="@color/color1"-->
+                <!--            android:textSize="26sp"-->
+                <!--            android:textStyle="bold" />-->
+
+                <!--        <TextView-->
+                <!--            android:layout_width="wrap_content"-->
+                <!--            android:layout_height="wrap_content"-->
+                <!--            android:text="Total Entry/Exit"-->
+                <!--            android:textColor="#AB2A295E"-->
+                <!--            android:textSize="12sp"-->
+                <!--            android:textStyle="bold" />-->
+
+                <!--        <TextView-->
+                <!--            android:id="@+id/entries_status"-->
+                <!--            android:layout_width="wrap_content"-->
+                <!--            android:layout_height="wrap_content"-->
+                <!--            android:text="0/0"-->
+                <!--            android:textColor="@color/color1"-->
+                <!--            android:textSize="26sp"-->
+                <!--            android:textStyle="bold" />-->
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/view_entries"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:backgroundTint="#C30859"
+                android:textSize="18sp"
+                android:padding="10dp"
+                android:alpha="0.5"
+                android:layout_margin="10dp"
+                android:text="View Entries"
+                android:textColor="?attr/colorOnPrimary"
+                app:icon="@drawable/person_check_24dp_5f6368_fill1_wght400_grad0_opsz24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/white" />
         </LinearLayout>
+    </ScrollView>
 
-        <CheckBox
-            android:id="@+id/enable_date_selection_range_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/enable_date_range_selection_range"/>
-
-
-        <!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Date"-->
-<!--            android:textColor="#AB2A295E"-->
-<!--            android:textSize="12sp"-->
-<!--            android:textStyle="bold" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/date"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="22 - 09 - 2024"-->
-<!--            android:textColor="@color/color1"-->
-<!--            android:textSize="26sp"-->
-<!--            android:textStyle="bold" />-->
-
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Total Entry/Exit"-->
-<!--            android:textColor="#AB2A295E"-->
-<!--            android:textSize="12sp"-->
-<!--            android:textStyle="bold" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/entries_status"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="0/0"-->
-<!--            android:textColor="@color/color1"-->
-<!--            android:textSize="26sp"-->
-<!--            android:textStyle="bold" />-->
-
-    </LinearLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/view_entries"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:backgroundTint="#C30859"
-        android:textSize="18sp"
-        android:padding="10dp"
-        android:alpha="0.5"
-        android:layout_margin="10dp"
-        android:text="View Entries"
-        android:textColor="?attr/colorOnPrimary"
-        app:icon="@drawable/person_check_24dp_5f6368_fill1_wght400_grad0_opsz24"
-        app:iconGravity="textStart"
-        app:iconTint="@color/white" />
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/create_category_button"
+            android:src="@drawable/round_category_24"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+        </ImageView>
+    </LinearLayout>
 </LinearLayout>

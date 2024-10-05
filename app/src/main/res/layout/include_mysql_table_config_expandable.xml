@@ -67,7 +67,7 @@
             android:id="@+id/editTextMYSQLDBVariableTableNameSuffix"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="{variables}"
+            android:text="{mm}{yyyy}"
             android:focusable="true"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>

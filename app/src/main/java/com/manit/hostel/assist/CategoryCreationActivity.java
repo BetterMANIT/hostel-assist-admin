@@ -10,6 +10,7 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -37,11 +38,11 @@ public class CategoryCreationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_category);
 //        addMYSQLDBExpandable();
+        addCategoryPurposeEditText();
         addCreateCategoryButton();
         fetchListOfHostels();
 
 
-        addCategoryPurposeEditText();
 
     }
 
@@ -95,8 +96,8 @@ public class CategoryCreationActivity extends AppCompatActivity {
     private void addCategoryPurposeEditText() {
          this.mMYSQLConstantTableName = findViewById(R.id.editTextMYSQLDBTableName);
          this.mMYSQLVariableTableName = findViewById(R.id.editTextMYSQLDBVariableTableNameSuffix);
-         this.mCategoryNameEditText = findViewById(R.id.editTextScholarNumber);
-        mCategoryNameEditText.setFilters(new InputFilter[]{
+         this.mCategoryNameEditText = findViewById(R.id.editTextCategoryName);
+          mCategoryNameEditText.setFilters(new InputFilter[]{
                 (source, start, end, dest, dstart, dend) -> {
                     for (int i = start; i < end; i++) {
                         char c = source.charAt(i);
@@ -124,7 +125,7 @@ public class CategoryCreationActivity extends AppCompatActivity {
                 if(s!=null && !s.toString().isEmpty()) {
                     mCreateCategoryButton.setAlpha(1);
                     mCreateCategoryButton.setEnabled(true);
-                    mMYSQLConstantTableName.setText(s.toString().replaceAll(" ", "_"));
+//                    mMYSQLConstantTableName.setText(s.toString().replaceAll(" ", "_"));
                 }else{
                     mCreateCategoryButton.setAlpha(0.5F);
                     mCreateCategoryButton.setEnabled(false);
@@ -169,7 +170,15 @@ public class CategoryCreationActivity extends AppCompatActivity {
         mHostelSpinnerTextInputLayout.setEnabled(true);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, classes);
         final AutoCompleteTextView mHostelSelectionSpinnerAutoCompleteTextView = findViewById(R.id.hostel_selection_spinner);
+        mHostelSelectionSpinnerAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mMYSQLConstantTableName.setText(classes.get(position));
+
+            }
+        });
         mHostelSelectionSpinnerAutoCompleteTextView.setAdapter(adapter);
+
 //        mHostelSelectionSpinnerAutoCompleteTextView.showDropDown();
 //        mHostelSelectionSpinnerAutoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
 //            Log.d(HomeActivity.this.toString(), "onItemSelected");

@@ -31,8 +31,11 @@ public class MariaDBConnection {
     String URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME = "guard/fetch_all_entries_by_table_name.php";
     String URL_SUFFIX_GET_STUDENT_INFO = "get_student_info.php";
     String URL_SUFFIX_ADD_STUDENT_ENTRY = "open_new_entry.php";
-    String URL_SUFFIX_CREATE_ENTRY_CATEGORY_IN_A_HOSTEL = "guard/create_entry_category_in_a_hostel.php";
+    String URL_SUFFIX_GET_LIST_OF_CATEGORY_NAME_WITH_TABLE_NAME_WITH_HOSTEL_NAME = "/guard/get_list_of_table_name_with_purposes_with_hostel_name.php";
+    String URL_SUFFIX_CREATE_ENTRY_CATEGORY_IN_A_HOSTEL = "guard/create_entry_purpose_in_a_hostel.php";
     String URL_SUFFIX_CLOSE_STUDENT_ENTRY = "close_already_existing_entry.php";
+    String URL_SUFFIX_GET_PURPOSE_BY_HOSTEL_NAME = "student/get_purposes_by_hostel_name.php";
+
     String URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE = "guard/check_if_new_update_in_db_table.php";
 
 
@@ -72,10 +75,12 @@ public class MariaDBConnection {
         }
 
     }
-    public void fetchEntryExitList(Callback callback, String table_name){
-        final String BASE_URL_PLUS_SUFFIX = BASE_URL+URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME+"?table_name="+table_name;
+    public void fetchEntryExitList(Callback callback, String table_name, String purpose){
+        String BASE_URL_PLUS_SUFFIX = BASE_URL+URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME+"?table_name="+table_name;
+        if(purpose!=null)
+            BASE_URL_PLUS_SUFFIX += "&purpose=" + purpose;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
-        final StringRequest mStringRequest = new StringRequest(Request.Method.GET,BASE_URL_PLUS_SUFFIX , (Response.Listener<String>) response -> callback.onResponse(response), (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        final StringRequest mStringRequest = new StringRequest(Request.Method.GET,BASE_URL_PLUS_SUFFIX , (Response.Listener<String>) response -> handleCallBackResponse(callback, response), (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
         mQueue.add(mStringRequest);
     }
 
@@ -88,16 +93,28 @@ public class MariaDBConnection {
 
 
 
-    public void check_if_new_update_in_table(Callback callback, String table_name) {
+    public void check_if_new_update_in_table(Callback callback, String table_name, String purpose) {
 
 //        final RequestFuture<String> future = RequestFuture.newFuture();
 
-        final String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE+"?table_name="+table_name + "&last_update=" +AppPref.getLastTimeTableFetchedUNIXTimestamp(mAppCompatActivity, table_name) ;
-        Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
+        String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE+"?table_name="+table_name + "&last_update=" +AppPref.getLastTimeTableFetchedUNIXTimestamp(mAppCompatActivity, table_name) ;
+        if(purpose!=null)
+            BASE_URL_PLUS_SUFFIX += "&purpose=" + purpose;
+        Log.e(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
 
 //        final StringRequest mStringRequests = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, future, future);
 
         final StringRequest mStringRequest = new StringRequest(Request.Method.GET,BASE_URL_PLUS_SUFFIX , (Response.Listener<String>) response -> {handleCallBackResponse(callback, response);}, (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        mQueue.add(mStringRequest);
+    }
+
+    public void get_list_of_category_name_with_table_name_with_hostel_name(Callback callback){
+        final String BASE_URL_PLUS_SUFFIX = BASE_URL+URL_SUFFIX_GET_LIST_OF_CATEGORY_NAME_WITH_TABLE_NAME_WITH_HOSTEL_NAME;
+        Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
+
+        final StringRequest mStringRequest = new StringRequest(Request.Method.POST, BASE_URL_PLUS_SUFFIX,
+                (Response.Listener<String>) response -> handleCallBackResponse(callback, response),
+                (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
         mQueue.add(mStringRequest);
     }
 
@@ -107,7 +124,12 @@ public class MariaDBConnection {
                                   String photo_url, int phone_no,
                                   String section,
                                   String hostel_name,
+                                  String purpose,
+                                  String table_name,
+                                  String created_by,
                                   Callback callback){
+
+        Log.d(MariaDBConnection.class.getSimpleName(), "add_entry_student TABLE_NAME: " + table_name);
 
         final String BASE_URL_PLUS_SUFFIX = BASE_URL+URL_SUFFIX_ADD_STUDENT_ENTRY;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
@@ -127,6 +149,11 @@ public class MariaDBConnection {
                 params.put("phone_no", String.valueOf(phone_no));
                 params.put("section", section);
                 params.put("hostel_name", hostel_name);
+                params.put("purpose", purpose);
+                params.put("table_name", table_name);
+                params.put("created_by", created_by);
+                Log.d(MariaDBConnection.class.getSimpleName(), "add_entry_student 2 TABLE_NAME: " + table_name);
+
                 return params;
             }
             @Override
@@ -138,6 +165,15 @@ public class MariaDBConnection {
         mQueue.add(mStringRequest);
     }
 
+
+    public void get_category_details_by_hostel_name(Callback callback, String hostel_name){
+        final String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_GET_PURPOSE_BY_HOSTEL_NAME + "?hostel_name=" + hostel_name;
+        Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
+        final StringRequest mStringRequest = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX,
+                (Response.Listener<String>) response -> handleCallBackResponse(callback, response),
+                (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        mQueue.add(mStringRequest);
+    }
     public void create_new_category_in_a_hostel(String category_name,
                                                 String constant_table_name,
                                     String variable_table_name_suffix,
@@ -162,7 +198,7 @@ public class MariaDBConnection {
                 params.put("variable_table_name_suffix", variable_table_name_suffix);
                 params.put("hostel_name", hostel_name);
                 params.put("created_by", created_by);
-                params.put("category_name", category_name);
+                params.put("purpose", category_name);
                 return params;
             }
             @NonNull

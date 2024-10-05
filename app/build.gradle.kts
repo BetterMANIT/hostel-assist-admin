@@ -47,6 +47,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.0")
     implementation ("com.google.code.gson:gson:2.8.9")
     implementation ("com.github.skydoves:expandablelayout:1.0.7")
+    implementation ("com.google.mlkit:translate:17.0.3")
 
 
 }

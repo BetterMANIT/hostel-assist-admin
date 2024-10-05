@@ -124,6 +124,15 @@
                     android:text="Hostel name"
                     android:textColor="#000000"
                     android:textStyle="bold" />
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/purpose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Purpose"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
 
                 <TextView
                     android:visibility="gone"
@@ -140,6 +149,29 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/spinner_purpose_selection_text_input_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginBottom="10dp"
+            android:hint="Select category/purpose"
+            app:boxBackgroundColor="@color/color2_light"
+            app:endIconMode="dropdown_menu"
+            app:startIconDrawable="@drawable/round_category_24">
+
+            <AutoCompleteTextView
+                android:id="@+id/spinner_to_category_selection"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="false"
+                android:text="Loading.."
+                android:inputType="none"
+                android:paddingStart="50dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
             android:visibility="gone"
             android:id="@+id/entry_already_exists"
@@ -170,6 +202,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Create Entry"
+                android:alpha="0.5"
                 android:layout_marginTop="4dp"/>
 
             <Button
