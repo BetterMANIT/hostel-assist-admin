@@ -1,5 +1,8 @@
 plugins {
     id("com.android.application")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+
 }
 
 android {
@@ -49,5 +52,9 @@ dependencies {
     implementation ("com.github.skydoves:expandablelayout:1.0.7")
     implementation ("com.google.mlkit:translate:17.0.3")
 
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-config")
 
 }

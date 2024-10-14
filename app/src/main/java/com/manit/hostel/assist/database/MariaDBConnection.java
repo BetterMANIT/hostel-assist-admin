@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.manit.hostel.assist.data.AppPref;
 
 import org.jetbrains.annotations.Contract;
@@ -26,7 +27,8 @@ import java.util.concurrent.ExecutionException;
 public class MariaDBConnection {
 
 
-    private static final String BASE_URL = "http://4.186.57.254/API/";
+    private static String BASE_URL;
+    private final FirebaseRemoteConfig mFirebaseRemoteConfig;
     String URL_SUFFIX_GET_LIST_OF_HOSTEL_NAMES = "guard/get_list_of_hostel_names.php";
     String URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME = "guard/fetch_all_entries_by_table_name.php";
     String URL_SUFFIX_GET_STUDENT_INFO = "get_student_info.php";
@@ -44,10 +46,12 @@ public class MariaDBConnection {
 
     private final RequestQueue mQueue;
     private final AppCompatActivity mAppCompatActivity;
-    public MariaDBConnection(AppCompatActivity mAppCompatActivity){
-        mQueue = Volley.newRequestQueue(mAppCompatActivity);
-        this.mAppCompatActivity = mAppCompatActivity;
 
+    public MariaDBConnection(AppCompatActivity mAppCompatActivity) {
+        mQueue = Volley.newRequestQueue(mAppCompatActivity);
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        this.mAppCompatActivity = mAppCompatActivity;
+        BASE_URL = mFirebaseRemoteConfig.getString("BASE_URL")+"/API/";
     }
 
     public void get_list_of_hostel_names(Callback callback){
