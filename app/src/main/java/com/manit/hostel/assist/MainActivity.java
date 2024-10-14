@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         lb = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
         lb.getRoot().postDelayed(()->{
-            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+            Intent in = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(in);
         },2000);
     }

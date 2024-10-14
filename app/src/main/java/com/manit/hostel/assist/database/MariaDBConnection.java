@@ -51,7 +51,6 @@ public class MariaDBConnection {
     }
 
     public void get_list_of_hostel_names(Callback callback){
-        // No GET or POST Params required
         final String BASE_URL_PLUS_SUFFIX = BASE_URL+URL_SUFFIX_GET_LIST_OF_HOSTEL_NAMES;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
         StringRequest mStringRequest = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX , (Response.Listener<String>) response -> {handleCallBackResponse(callback, response);}, (Response.ErrorListener) error -> {callback.onErrorResponse("Error : " + error.getMessage());});
