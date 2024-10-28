@@ -107,8 +107,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void addCreateCategoryButton() {
-       final ImageView mCreateCategoryImageView = findViewById(R.id.create_category_button);
-        mCreateCategoryImageView.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, CategoryCreationActivity.class)));
+        lb.createCategoryButton.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, CategoryCreationActivity.class)));
     }
 
     private void addCheckbox() {

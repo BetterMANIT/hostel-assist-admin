@@ -29,7 +29,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonArray;
@@ -55,6 +54,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ViewEntryActivity extends AppCompatActivity {
+    public static final int UPDATE_MILLISEC = 10000;
     ActivityViewEntriesBinding lb;
 
     private EntriesAdapter entAdapter;
@@ -63,6 +63,7 @@ public class ViewEntryActivity extends AppCompatActivity {
     private TextView mStudentsBackInHostel, mStudentsOutOfHostel;
 
     private MariaDBConnection mMariaDBConnection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,10 +75,10 @@ public class ViewEntryActivity extends AppCompatActivity {
         this.mMariaDBConnection = new MariaDBConnection(this);
 
 
-        if(getIntent().hasExtra(INTENT_KEY_HOSTEL_NAME))
+        if (getIntent().hasExtra(INTENT_KEY_HOSTEL_NAME))
             lb.hostelName.setText(getString(R.string.hostel_name) + " : " + getIntent().getStringExtra(INTENT_KEY_HOSTEL_NAME)); // Set the hostel name
-        if(getIntent().hasExtra(INTENT_KEY_DATE))
-         lb.date.setText(getIntent().getStringExtra(INTENT_KEY_DATE));  // Set the date
+        if (getIntent().hasExtra(INTENT_KEY_DATE))
+            lb.date.setText(getIntent().getStringExtra(INTENT_KEY_DATE));  // Set the date
         lb.studentsListRecyclerview.post(() -> lb.studentsListRecyclerview.setLayoutManager(new LinearLayoutManager(this)));
         addClickLogicToFilters();
         addClickLogic();
@@ -88,25 +89,22 @@ public class ViewEntryActivity extends AppCompatActivity {
     }
 
 
-    public static String INTENT_KEY_DATE = "date",
-            INTENT_KEY_HOSTEL_NAME = "hostel_name",
-            INTENT_TABLE_NAME = "table_name",
-            INTENT_PURPOSE = "purpose";
+    public static String INTENT_KEY_DATE = "date", INTENT_KEY_HOSTEL_NAME = "hostel_name", INTENT_TABLE_NAME = "table_name", INTENT_PURPOSE = "purpose";
 
     @Nullable
-    private String getPurpose(){
-         if (getIntent().hasExtra(INTENT_PURPOSE)) {
-             Log.d(ViewEntryActivity.class.getSimpleName(), "purpose : " + getIntent().getStringExtra(INTENT_PURPOSE));
+    private String getPurpose() {
+        if (getIntent().hasExtra(INTENT_PURPOSE)) {
+            Log.d(ViewEntryActivity.class.getSimpleName(), "purpose : " + getIntent().getStringExtra(INTENT_PURPOSE));
 
-             return getIntent().getStringExtra(INTENT_PURPOSE);
-         }
-         Log.d(ViewEntryActivity.class.getSimpleName(), "Purpose is null");
-         return null;
+            return getIntent().getStringExtra(INTENT_PURPOSE);
+        }
+        Log.d(ViewEntryActivity.class.getSimpleName(), "Purpose is null");
+        return null;
     }
+
     @NonNull
-    private String getTableName(){
-        if(true)
-           return  getIntent().getStringExtra(INTENT_TABLE_NAME);
+    private String getTableName() {
+        if (true) return getIntent().getStringExtra(INTENT_TABLE_NAME);
         String DATE_MMYYYY = new SimpleDateFormat("MMyyyy", Locale.getDefault()).format(new Date());
         final String originalDateString = getIntent().getStringExtra(INTENT_KEY_DATE);
         final SimpleDateFormat originalFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -129,6 +127,7 @@ public class ViewEntryActivity extends AppCompatActivity {
         final ExtendedFloatingActionButton mExtendedFloatingActionButton = findViewById(R.id.extended_fab);
         mExtendedFloatingActionButton.setOnClickListener(v -> showAddEntriesDialog());
     }
+
     private void showAddEntriesDialog() {
         // Create a Dialog
 
@@ -194,7 +193,7 @@ public class ViewEntryActivity extends AppCompatActivity {
             mMariaDBConnection.get_student_info(new MariaDBConnection.Callback() {
                 @Override
                 public void onResponse(String result) {
-                    try{
+                    try {
                         final JSONObject mJSONObject = new JSONObject(result);
                         final JSONObject student_info = mJSONObject.getJSONObject("data");
                         Log.d(ViewEntryActivity.class.getSimpleName(), "student_info : " + student_info.toString());
@@ -217,25 +216,23 @@ public class ViewEntryActivity extends AppCompatActivity {
                                         mPurposeList.add(purpose);
                                         Log.d(ViewEntryActivity.class.getSimpleName(), "Table name : " + table_name + "\nPurpose");
                                     }
-                                    mCategorySelectionAutoCompleteTextView.setAdapter(new ArrayAdapter<>(
-                                            ViewEntryActivity.this,
-                                            android.R.layout.simple_dropdown_item_1line,
-                                            mPurposeList // Convert Collection to String[]
+                                    mCategorySelectionAutoCompleteTextView.setAdapter(new ArrayAdapter<>(ViewEntryActivity.this, android.R.layout.simple_dropdown_item_1line, mPurposeList // Convert Collection to String[]
                                     ));
                                     mCategorySelectionAutoCompleteTextView.setOnItemClickListener((parent, view1, position, id) -> {
                                         table_name.set(mTableNameList.get(position));
-                                        mCreateEntryButtonByScholarNo.setAlpha(1f);});
+                                        mCreateEntryButtonByScholarNo.setAlpha(1f);
+                                    });
                                     mCategorySelectionAutoCompleteTextView.showDropDown();
                                     isCategoryDetailsLoaded[0] = true;
 
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     onErrorResponse(e.getMessage());
                                 }
                             }
 
                             @Override
                             public void onErrorResponse(String error) {
-                                Toast.makeText(ViewEntryActivity.this, "Error : " + error,Toast.LENGTH_LONG).show();
+                                Toast.makeText(ViewEntryActivity.this, "Error : " + error, Toast.LENGTH_LONG).show();
 
                             }
                         }, student_info.getString("hostel_name"));
@@ -245,8 +242,8 @@ public class ViewEntryActivity extends AppCompatActivity {
                         mRoomNoTextView.setText(getString(R.string.room_no) + " : " + student_info.getInt("room_no"));
                         mHostelNameTextView.setText(getString(R.string.hostel_name) + " : " + student_info.getString("hostel_name"));
                         mPurposeTextView.setText(getString(R.string.purpose) + " : " + student_info.getString("purpose"));
-                        if(!student_info.isNull("entry_exit_table_name")){
-                            Log.d(ViewEntryActivity.class.getSimpleName(),"entry exit table is not null");
+                        if (!student_info.isNull("entry_exit_table_name")) {
+                            Log.d(ViewEntryActivity.class.getSimpleName(), "entry exit table is not null");
                             mCreateEntryButtonByScholarNo.setVisibility(View.GONE);
                             mEntryAlreadyExists.setVisibility(View.VISIBLE);
                             mCloseEntryButtonByScholarNo.setVisibility(View.VISIBLE);
@@ -254,8 +251,8 @@ public class ViewEntryActivity extends AppCompatActivity {
                             mEntryOpenTimeTextView.setText(student_info.getString("entry_exit_table_name"));
                             mPurposeTextView.setVisibility(View.VISIBLE);
                             dialog.findViewById(R.id.spinner_purpose_selection_text_input_layout).setVisibility(View.GONE);
-                        }else {
-                            Log.d(ViewEntryActivity.class.getSimpleName(),"entry exit table is null");
+                        } else {
+                            Log.d(ViewEntryActivity.class.getSimpleName(), "entry exit table is null");
                             mCreateEntryButtonByScholarNo.setVisibility(View.VISIBLE);
                             mCloseEntryButtonByScholarNo.setVisibility(View.GONE);
                             mEntryAlreadyExists.setVisibility(View.GONE);
@@ -263,12 +260,8 @@ public class ViewEntryActivity extends AppCompatActivity {
                             dialog.findViewById(R.id.spinner_purpose_selection_text_input_layout).setVisibility(View.VISIBLE);
 
                         }
-                        Glide.with(ViewEntryActivity.this)
-                                .load(student_info.getString("photo_url"))
-                                .placeholder(R.drawable.demo_pic1)
-                                .error(R.drawable.baseline_error_24)
-                                .into(mStudentImageview);
-                    }catch (Exception e){
+                        Glide.with(ViewEntryActivity.this).load(student_info.getString("photo_url")).placeholder(R.drawable.demo_pic1).error(R.drawable.baseline_error_24).into(mStudentImageview);
+                    } catch (Exception e) {
                         Toast.makeText(ViewEntryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         onErrorResponse(e.getMessage());
                     }
@@ -279,14 +272,13 @@ public class ViewEntryActivity extends AppCompatActivity {
                     mEnterScholarNoLinearLayout.setVisibility(View.GONE);
 
 
-
                     mShowDetailsByScholarNoLinearLayout.setVisibility(View.VISIBLE);
                     mCreateEntryButtonByScholarNo.setOnClickListener(v -> {
-                        if(!isCategoryDetailsLoaded[0]){
+                        if (!isCategoryDetailsLoaded[0]) {
                             Toast.makeText(ViewEntryActivity.this, "Please wait for the purpose details to load", Toast.LENGTH_LONG).show();
                             return;
                         }
-                        try{
+                        try {
                             final JSONObject mJSONObject = new JSONObject(result);
                             final JSONObject student_info = mJSONObject.getJSONObject("data");
                             final String name = student_info.getString("name");
@@ -297,36 +289,38 @@ public class ViewEntryActivity extends AppCompatActivity {
                             final String section = student_info.getString("section");
                             final String hostel_name = student_info.getString("hostel_name");
 
-                           mMariaDBConnection.add_entry_student(scholar_no, name, room_no, photo_url, phone_no, section, hostel_name, mCategorySelectionAutoCompleteTextView.getText().toString(), table_name.get(),AppPref.getUsername(ViewEntryActivity.this),new MariaDBConnection.Callback() {
+                            mMariaDBConnection.add_entry_student(scholar_no, name, room_no, photo_url, phone_no, section, hostel_name, mCategorySelectionAutoCompleteTextView.getText().toString(), table_name.get(), AppPref.getUsername(ViewEntryActivity.this), new MariaDBConnection.Callback() {
                                 @Override
                                 public void onResponse(String result) {
                                     fetchAllEntriesFromDBAndUpdateRecyclerView();
                                     Toast.makeText(ViewEntryActivity.this, result, Toast.LENGTH_LONG).show();
                                 }
+
                                 @Override
                                 public void onErrorResponse(String error) {
                                     Toast.makeText(ViewEntryActivity.this, error, Toast.LENGTH_LONG).show();
                                 }
                             });
 
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             Toast.makeText(ViewEntryActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                         mCreateEntryButtonByScholarNo.setOnClickListener(v1 -> Toast.makeText(ViewEntryActivity.this, "In progress", Toast.LENGTH_LONG).show());
                         dialog.dismiss();
-                   });
-                    mCloseEntryButtonByScholarNo.setOnClickListener(v ->{ mMariaDBConnection.close_entry_student(scholarNumber, new MariaDBConnection.Callback() {
-                        @Override
-                        public void onResponse(String result) {
-                            fetchAllEntriesFromDBAndUpdateRecyclerView();
-                            Toast.makeText(ViewEntryActivity.this, result, Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onErrorResponse(String error) {
-                            Toast.makeText(ViewEntryActivity.this, error, Toast.LENGTH_LONG).show();
-                        }
                     });
+                    mCloseEntryButtonByScholarNo.setOnClickListener(v -> {
+                        mMariaDBConnection.close_entry_student(scholarNumber, new MariaDBConnection.Callback() {
+                            @Override
+                            public void onResponse(String result) {
+                                fetchAllEntriesFromDBAndUpdateRecyclerView();
+                                Toast.makeText(ViewEntryActivity.this, result, Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onErrorResponse(String error) {
+                                Toast.makeText(ViewEntryActivity.this, error, Toast.LENGTH_LONG).show();
+                            }
+                        });
                         dialog.dismiss();
                     });
                 }
@@ -401,44 +395,35 @@ public class ViewEntryActivity extends AppCompatActivity {
     }
 
     private void addClickLogicToFilters() {
-        lb.allFilter.setOnClickListener(v -> {
-            if (entAdapter != null) {
-                currentFilter = ALL_FILTER;
-                entAdapter.filterEntries(ALL_FILTER);
-                setFilterActive(lb.allFilter);
-            }
-        });
-        lb.exitOnlyFilter.setOnClickListener(v -> {
-            if (entAdapter != null) {
-                currentFilter = EXIT_ONLY_FILTER;
-                entAdapter.filterEntries(EXIT_ONLY_FILTER);
-            }
-        });
-        lb.entered.setOnClickListener(v -> {
-            if (entAdapter != null) {
-                currentFilter = ENTERED_FILTER;
-                entAdapter.filterEntries(ENTERED_FILTER);
+        lb.filterChipGroup.setSelectionRequired(true);
+        lb.filterChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (!checkedIds.isEmpty()) {
+                int checkedId = checkedIds.get(0);
+                blinkAnim(lb.studentsListRecyclerview);
+                if (checkedId == R.id.all_chip) {
+                    if (entAdapter != null) {
+                        currentFilter = ALL_FILTER;
+                        entAdapter.filterEntries(ALL_FILTER);
+                    }
+                } else if (checkedId == R.id.exit_only_chip) {
+                    if (entAdapter != null) {
+                        currentFilter = EXIT_ONLY_FILTER;
+                        entAdapter.filterEntries(EXIT_ONLY_FILTER);
+                    }
+                } else if (checkedId == R.id.entered_chip) {
+                    if (entAdapter != null) {
+                        currentFilter = ENTERED_FILTER;
+                        entAdapter.filterEntries(ENTERED_FILTER);
+                    }
+                }
             }
         });
     }
 
-    private void setFilterActive(MaterialButton view) {
-        lb.allFilter.setBackgroundTintList(getResources().getColorStateList(R.color.color2_light, null));
-        lb.exitOnlyFilter.setBackgroundTintList(getResources().getColorStateList(R.color.color2_light, null));
-        lb.entered.setBackgroundTintList(getResources().getColorStateList(R.color.color2_light, null));
-        lb.allFilter.setTextColor(getResources().getColor(R.color.color1, null));
-        lb.exitOnlyFilter.setTextColor(getResources().getColor(R.color.color1, null));
-        lb.entered.setTextColor(getResources().getColor(R.color.color1, null));
-        view.setBackgroundTintList(getResources().getColorStateList(R.color.color1, null));
-        view.setTextColor(getResources().getColor(R.color.white, null));
-    }
 
-
-
-
-
-    private void check_for_updates_in_db_and_update_recyclerview_accordingly(){
-        Toast.makeText(this, "check_for_updates_in_db_and_update_recyclerview_accordingly", Toast.LENGTH_LONG).show();
+    private void checkForUpdate() {
+        blinkAnim(lb.status);
+        lb.status.setText("syncing...");
         mMariaDBConnection.check_if_new_update_in_table(new MariaDBConnection.Callback() {
             @Override
             public void onResponse(String result) {
@@ -447,7 +432,7 @@ public class ViewEntryActivity extends AppCompatActivity {
                     // Extract the 'status' value
                     String status = responseObject.getString("status");
 
-                    AppPref.setLastTimeTableFetchedUNIXTimestamp(ViewEntryActivity.this, getTableName(), responseObject.getLong("last_update") );
+                    AppPref.setLastTimeTableFetchedUNIXTimestamp(ViewEntryActivity.this, getTableName(), responseObject.getLong("last_update"));
 
                     // Extract the 'hasUpdates' value
                     boolean hasUpdates = responseObject.getBoolean("hasUpdates");
@@ -457,14 +442,18 @@ public class ViewEntryActivity extends AppCompatActivity {
                         fetchAllEntriesFromDBAndUpdateRecyclerView();
                         System.out.println("Status is success, and there are updates.");
                     } else {
-                        mPostDelayedHandler.removeCallbacks(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable);
-                        mPostDelayedHandler.postDelayed(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable, 10000);
+                        mPostDelayedHandler.removeCallbacks(updateListRunnable);
+                        mPostDelayedHandler.postDelayed(updateListRunnable, UPDATE_MILLISEC);
 
                         System.out.println("No updates available or status is not suc");
                     }
-
-//                    Log.d(ViewEntryActivity.class.getSimpleName(), "Table updated : " +);
-                }catch (Exception e){}
+                    runOnUiThread(() -> {
+                        blinkAnim(lb.status);
+                        lb.status.setText("Entries");
+                    });
+                    //Log.d(ViewEntryActivity.class.getSimpleName(), "Table updated : " +);
+                } catch (Exception e) {
+                }
             }
 
             @Override
@@ -475,8 +464,13 @@ public class ViewEntryActivity extends AppCompatActivity {
 
     }
 
-   private final Handler mPostDelayedHandler = new Handler();
-    private final Runnable mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable = () -> check_for_updates_in_db_and_update_recyclerview_accordingly();
+    private void blinkAnim(View view) {
+        view.animate().alpha(0).setDuration(200).start();
+        view.animate().alpha(1).setDuration(200).start();
+    }
+
+    private final Handler mPostDelayedHandler = new Handler();
+    private final Runnable updateListRunnable = () -> checkForUpdate();
 
 
     private void fetchAllEntriesFromDBAndUpdateRecyclerView() {
@@ -491,7 +485,7 @@ public class ViewEntryActivity extends AppCompatActivity {
                 final JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
                 final JsonArray dataArray = jsonObject.getAsJsonArray("data");
 
-                for (int i = dataArray.size()-1; i > 0 ; i--) {
+                for (int i = dataArray.size() - 1; i > 0; i--) {
                     JsonObject entryObject = dataArray.get(i).getAsJsonObject();
 
                     String entryNo = entryObject.get("id").getAsString();
@@ -500,15 +494,15 @@ public class ViewEntryActivity extends AppCompatActivity {
                     String scholarNo = entryObject.get("scholar_no").getAsString();
                     String exitTime = entryObject.get("open_time").getAsString();
                     String entryTime = "";
-                    if(!entryObject.get("close_time").isJsonNull())
+                    if (!entryObject.get("close_time").isJsonNull())
                         entryTime = entryObject.get("close_time").getAsString();
                     String photoURL = entryObject.get("photo_url").getAsString();
 
                     entriesList.add(new Entries(entryNo, name, roomNo, scholarNo, exitTime, entryTime, photoURL));
                 }
 
-                mPostDelayedHandler.removeCallbacks(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable);
-                mPostDelayedHandler.postDelayed(mCheckForUpdatesRunnableInDBAndUpdateAccordinglyRunnable, 10000);
+                mPostDelayedHandler.removeCallbacks(updateListRunnable);
+                mPostDelayedHandler.postDelayed(updateListRunnable, 10000);
                 updateRecyclerViewList(entriesList);
 
             }
@@ -523,7 +517,7 @@ public class ViewEntryActivity extends AppCompatActivity {
 
     }
 
-    void updateRecyclerViewList(ArrayList<Entries> entriesList){
+    void updateRecyclerViewList(ArrayList<Entries> entriesList) {
         if (entAdapter == null) {
             entAdapter = new EntriesAdapter(entriesList);
             lb.studentsListRecyclerview.setAdapter(entAdapter);
@@ -532,23 +526,22 @@ public class ViewEntryActivity extends AppCompatActivity {
         }
         entAdapter.filterEntries(currentFilter);
         Integer[] countOfStudentsInHostel = getCountOfStudentsInBacKHostel(entriesList);
-        if(mStudentsBackInHostel !=null)
+        if (mStudentsBackInHostel != null)
             mStudentsBackInHostel.setText(getString(R.string.students_back_in_hostel) + " : " + countOfStudentsInHostel[0]);
-        if(mStudentsOutOfHostel!=null)
+        if (mStudentsOutOfHostel != null)
             mStudentsOutOfHostel.setText(getString(R.string.students_out_of_hostel) + " : " + countOfStudentsInHostel[1]);
 
     }
 
-    private Integer[] getCountOfStudentsInBacKHostel(ArrayList<Entries> entriesList){
-        if(entAdapter==null)
-            return new Integer[]{-1,-1};
+    private Integer[] getCountOfStudentsInBacKHostel(ArrayList<Entries> entriesList) {
+        if (entAdapter == null) return new Integer[]{-1, -1};
 
         Set<String> scholarNoSetBackInHostel = new HashSet<>();
         Set<String> scholarNoSetOutsideOfHostel = new HashSet<>();
         entriesList.forEach(entries -> {
-            if(entries.isBackInHostel() && !scholarNoSetOutsideOfHostel.contains(entries.getEntryNo())) {
+            if (entries.isBackInHostel() && !scholarNoSetOutsideOfHostel.contains(entries.getEntryNo())) {
                 scholarNoSetBackInHostel.add(entries.getScholarNo());
-            }else if(!scholarNoSetBackInHostel.contains(entries.getEntryNo())){
+            } else if (!scholarNoSetBackInHostel.contains(entries.getEntryNo())) {
                 scholarNoSetOutsideOfHostel.add(entries.getScholarNo());
             }
 

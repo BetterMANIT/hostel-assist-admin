@@ -6,9 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,7 +35,7 @@
                     tools:ignore="UseAppTint" />
 
                 <TextView
-                    android:id="@+id/name"
+                    android:id="@+id/status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -52,7 +50,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:background="#FFE9FC"
+                    android:visibility="gone"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/color3_light"
                     android:hint="Search....">
 
                     <EditText
@@ -151,54 +151,47 @@
 
         </LinearLayout>
 
-        <LinearLayout
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/filter_chip_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:padding="10dp"
+            app:checkedChip="@id/all_chip"
+            app:chipSpacing="10dp"
+            app:singleSelection="true">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/all_filter"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/all_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/color1"
-                android:padding="4dp"
                 android:text="All"
-                android:textColor="@color/white"
-                android:textSize="10sp" />
+                android:textColor="@color/chip_text_color_selector"
+                android:textSize="12sp"
+                app:chipBackgroundColor="@color/chip_background_selector" />
 
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/exit_only_filter"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/exit_only_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/color2_light"
-                android:padding="4dp"
                 android:text="Exit only"
-                android:textColor="@color/color1"
-                android:textSize="10sp" />
+                android:textColor="@color/chip_text_color_selector"
+                android:textSize="12sp"
+                app:chipBackgroundColor="@color/chip_background_selector" />
 
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/entered"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/entered_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/color2_light"
-                android:padding="4dp"
                 android:text="Entered"
-                android:textColor="@color/color1"
-                android:textSize="10sp" />
+                android:textColor="@color/chip_text_color_selector"
+                android:textSize="12sp"
+                app:chipBackgroundColor="@color/chip_background_selector" />
 
-        </LinearLayout>
+        </com.google.android.material.chip.ChipGroup>
 
         <androidx.recyclerview.widget.RecyclerView
 
@@ -206,23 +199,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             tools:listitem="@layout/student_view" />
 
 
     </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="match_parent"
-        android:layout_alignParentRight="true"
-            android:layout_height="wrap_content"
-        android:src="@drawable/round_pause_24"
-
-        android:layout_above="@id/extended_fab"
-        android:clickable="true"
-        tools:srcCompat="@drawable/round_pause_24"
-        android:layout_marginEnd="16dp"
-        />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/extended_fab"

@@ -15,6 +15,13 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.manit.hostel.assist.database.MariaDBConnection;
 import com.manit.hostel.assist.databinding.ActivityMainBinding;
 
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding lb;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
@@ -26,11 +33,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         lb = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(lb.getRoot());
-
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(36000).build();
-        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
-        fetchRemoteConfig();
+        allowAllSSL();
         /*  requestPermissions();
         Log.d(MainActivity.class.getSimpleName(), "Wifi Name list : " + new WifiScanner(this).getWifiList(this).toString());
         if (isLocationEnabled()) {
@@ -42,27 +45,59 @@ public class MainActivity extends AppCompatActivity {
         setupOneSignal();*/
     }
 
+    @Override
+    protected void onResume() {
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(36000).build();
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
+        fetchRemoteConfig();
+        super.onResume();
+    }
+
     private void fetchRemoteConfig() {
         mFirebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
                 String BASE_URL = mFirebaseRemoteConfig.getString("BASE_URL");
                 Log.d(MainActivity.class.getSimpleName(), "BASE_URL: " + BASE_URL);
                 dbConnection = new MariaDBConnection(this);
-                lb.getRoot().post(() -> {
+                runOnUiThread(() -> {
                     if (!isInternetAvailable(this)) {
                         showNoInternetDialog(this);
                     } else {
-                        lb.getRoot().postDelayed(() -> {
-                            Intent in = new Intent(getApplicationContext(), LoginActivity.class);
-                            startActivity(in);
-                            finish();
-                        }, 2000);
+                        Intent in = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(in);
+                        finish();
+
                     }
                 });
             } else {
                 showNoInternetDialog(this);
             }
         });
+    }
+
+    public static void allowAllSSL() {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                }
+
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+            }};
+
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+        } catch (Exception e) {
+            Log.e(LoginActivity.class.getSimpleName(), "SSL error", e);
+            e.printStackTrace();
+        }
     }
 
     public boolean isInternetAvailable(Context context) {
