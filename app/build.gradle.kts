@@ -51,7 +51,7 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.9")
     implementation ("com.github.skydoves:expandablelayout:1.0.7")
     implementation ("com.google.mlkit:translate:17.0.3")
-
+    implementation("com.google.firebase:firebase-auth")
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")

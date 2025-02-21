@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,7 +23,6 @@ import java.util.Map;
 
 public class MariaDBConnection {
 
-
     private static String BASE_URL;
     private final FirebaseRemoteConfig mFirebaseRemoteConfig;
     String URL_SUFFIX_GET_LIST_OF_HOSTEL_NAMES = "guard/get_list_of_hostel_names.php";
@@ -33,7 +33,6 @@ public class MariaDBConnection {
     String URL_SUFFIX_CREATE_ENTRY_CATEGORY_IN_A_HOSTEL = "guard/create_entry_purpose_in_a_hostel.php";
     String URL_SUFFIX_CLOSE_STUDENT_ENTRY = "close_already_existing_entry.php";
     String URL_SUFFIX_GET_PURPOSE_BY_HOSTEL_NAME = "student/get_purposes_by_hostel_name.php";
-
     String URL_SUFFIX_CHECK_IF_NEW_UPDATE_IN_DB_TABLE = "guard/check_if_new_update_in_db_table.php";
 
 
@@ -53,11 +52,7 @@ public class MariaDBConnection {
     public void get_list_of_hostel_names(Callback callback) {
         final String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_GET_LIST_OF_HOSTEL_NAMES;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
-        StringRequest mStringRequest = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, response -> {
-            handleCallBackResponse(callback, response);
-        }, (Response.ErrorListener) error -> {
-            callback.onErrorResponse("Error : " + error.getMessage());
-        });
+        StringRequest mStringRequest = getmStringRequest(callback, BASE_URL_PLUS_SUFFIX, Request.Method.GET);
         mQueue.add(mStringRequest);
     }
 
@@ -83,16 +78,14 @@ public class MariaDBConnection {
         String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME + "?table_name=" + table_name;
         if (purpose != null) BASE_URL_PLUS_SUFFIX += "&purpose=" + purpose;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
-        final StringRequest mStringRequest = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, (Response.Listener<String>) response -> handleCallBackResponse(callback, response), (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        final StringRequest mStringRequest = getmStringRequest(callback, BASE_URL_PLUS_SUFFIX, Request.Method.GET);
         mQueue.add(mStringRequest);
     }
 
     public void get_student_info(Callback callback, String scholar_no) {
         final String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_GET_STUDENT_INFO + "?scholar_no=" + scholar_no;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
-        final StringRequest mStringRequest = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, (Response.Listener<String>) response -> {
-            handleCallBackResponse(callback, response);
-        }, (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        final StringRequest mStringRequest = getmStringRequest(callback, BASE_URL_PLUS_SUFFIX, Request.Method.GET);
         mQueue.add(mStringRequest);
     }
 
@@ -107,9 +100,7 @@ public class MariaDBConnection {
 
 //        final StringRequest mStringRequests = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, future, future);
 
-        final StringRequest mStringRequest = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, (Response.Listener<String>) response -> {
-            handleCallBackResponse(callback, response);
-        }, (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        final StringRequest mStringRequest = getmStringRequest(callback, BASE_URL_PLUS_SUFFIX, Request.Method.GET);
         mQueue.add(mStringRequest);
     }
 
@@ -117,11 +108,11 @@ public class MariaDBConnection {
         final String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_GET_LIST_OF_CATEGORY_NAME_WITH_TABLE_NAME_WITH_HOSTEL_NAME;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
 
-        final StringRequest mStringRequest = new StringRequest(Request.Method.POST, BASE_URL_PLUS_SUFFIX, (Response.Listener<String>) response -> handleCallBackResponse(callback, response), (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        final StringRequest mStringRequest = getmStringRequest(callback, BASE_URL_PLUS_SUFFIX, Request.Method.POST);
         mQueue.add(mStringRequest);
     }
 
-    public void add_entry_student(long scholar_no, String name, int room_no, String photo_url, int phone_no, String section, String hostel_name, String purpose, String table_name, String created_by, Callback callback) {
+    public void add_entry_student(long scholar_no, String name, String room_no, String photo_url, String phone_no, String section, String hostel_name, String purpose, String table_name, String created_by, Callback callback) {
 
         Log.d(MariaDBConnection.class.getSimpleName(), "add_entry_student TABLE_NAME: " + table_name);
 
@@ -153,6 +144,15 @@ public class MariaDBConnection {
             public String getBodyContentType() {
                 return "application/x-www-form-urlencoded; charset=UTF-8";
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("device-id", AppPref.getDeviceId(mAppCompatActivity));
+                headers.put("token", AppPref.getAuthToken(mAppCompatActivity));
+                headers.put("username", AppPref.getUsername(mAppCompatActivity));
+                return headers;
+            }
         };
 
         mQueue.add(mStringRequest);
@@ -162,8 +162,21 @@ public class MariaDBConnection {
     public void get_category_details_by_hostel_name(Callback callback, String hostel_name) {
         final String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_GET_PURPOSE_BY_HOSTEL_NAME + "?hostel_name=" + hostel_name;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
-        final StringRequest mStringRequest = new StringRequest(Request.Method.GET, BASE_URL_PLUS_SUFFIX, (Response.Listener<String>) response -> handleCallBackResponse(callback, response), (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage()));
+        final StringRequest mStringRequest = getmStringRequest(callback, BASE_URL_PLUS_SUFFIX, Request.Method.GET);
         mQueue.add(mStringRequest);
+    }
+
+    private @NonNull StringRequest getmStringRequest(Callback callback, String BASE_URL_PLUS_SUFFIX, int type) {
+        return new StringRequest(type, BASE_URL_PLUS_SUFFIX, (Response.Listener<String>) response -> handleCallBackResponse(callback, response), (Response.ErrorListener) error -> callback.onErrorResponse("Error : " + error.getMessage())) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("device-id", AppPref.getDeviceId(mAppCompatActivity));
+                headers.put("token", AppPref.getAuthToken(mAppCompatActivity));
+                headers.put("username", AppPref.getUsername(mAppCompatActivity));
+                return headers;
+            }
+        };
     }
 
     public void create_new_category_in_a_hostel(String category_name, String constant_table_name, String variable_table_name_suffix, String hostel_name, String created_by, Callback callback) {
@@ -193,6 +206,15 @@ public class MariaDBConnection {
             public String getBodyContentType() {
                 return "application/x-www-form-urlencoded; charset=UTF-8";
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("device-id", AppPref.getDeviceId(mAppCompatActivity));
+                headers.put("token", AppPref.getAuthToken(mAppCompatActivity));
+                headers.put("username", AppPref.getUsername(mAppCompatActivity));
+                return headers;
+            }
         };
 
         mQueue.add(mStringRequest);
@@ -215,6 +237,15 @@ public class MariaDBConnection {
             @Override
             public String getBodyContentType() {
                 return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("device-id", AppPref.getDeviceId(mAppCompatActivity));
+                headers.put("token", AppPref.getAuthToken(mAppCompatActivity));
+                headers.put("username", AppPref.getUsername(mAppCompatActivity));
+                return headers;
             }
         };
 

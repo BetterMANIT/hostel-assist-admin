@@ -56,16 +56,16 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="Username"
             app:boxBackgroundColor="#102A295E"
             app:startIconDrawable="@drawable/alternate_email_24dp_5f6368_fill0_wght400_grad0_opsz24">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/emailEditText"
+                android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:inputType="textEmailAddress"
+                android:autofillHints="username"
+                android:inputType="text"
                 android:paddingStart="50dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,7 +85,7 @@
             app:startIconDrawable="@drawable/password_24dp_5f6368_fill0_wght400_grad0_opsz24">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/passwordEditText"
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="password"

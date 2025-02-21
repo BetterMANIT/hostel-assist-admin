@@ -76,9 +76,9 @@ public class ViewEntryActivity extends AppCompatActivity {
 
 
         if (getIntent().hasExtra(INTENT_KEY_HOSTEL_NAME))
-            lb.hostelName.setText(getString(R.string.hostel_name) + " : " + getIntent().getStringExtra(INTENT_KEY_HOSTEL_NAME)); // Set the hostel name
-        if (getIntent().hasExtra(INTENT_KEY_DATE))
-            lb.date.setText(getIntent().getStringExtra(INTENT_KEY_DATE));  // Set the date
+            lb.hostelName.setText("Hostel : " + getIntent().getStringExtra(INTENT_KEY_HOSTEL_NAME)); // Set the hostel name
+        if (getIntent().hasExtra(INTENT_PURPOSE))
+            lb.purpose.setText(getIntent().getStringExtra(INTENT_PURPOSE));  // Set the date
         lb.studentsListRecyclerview.post(() -> lb.studentsListRecyclerview.setLayoutManager(new LinearLayoutManager(this)));
         addClickLogicToFilters();
         addClickLogic();
@@ -87,7 +87,6 @@ public class ViewEntryActivity extends AppCompatActivity {
         Log.d(ViewEntryActivity.class.getSimpleName(), "table name : " + getTableName());
 
     }
-
 
     public static String INTENT_KEY_DATE = "date", INTENT_KEY_HOSTEL_NAME = "hostel_name", INTENT_TABLE_NAME = "table_name", INTENT_PURPOSE = "purpose";
 
@@ -239,7 +238,7 @@ public class ViewEntryActivity extends AppCompatActivity {
                         mScholarNumberTextView.setText(getString(R.string.scholar_no) + " : " + scholarNumber);
                         mPhoneNumberTextView.setText(getString(R.string.phone_no) + " : " + String.valueOf(student_info.getInt("phone_no")));
                         mStudentNameTextView.setText(getString(R.string.name) + " : " + student_info.getString("name"));
-                        mRoomNoTextView.setText(getString(R.string.room_no) + " : " + student_info.getInt("room_no"));
+                        mRoomNoTextView.setText(getString(R.string.room_no) + " : " + student_info.getString("room_no"));
                         mHostelNameTextView.setText(getString(R.string.hostel_name) + " : " + student_info.getString("hostel_name"));
                         mPurposeTextView.setText(getString(R.string.purpose) + " : " + student_info.getString("purpose"));
                         if (!student_info.isNull("entry_exit_table_name")) {
@@ -260,9 +259,9 @@ public class ViewEntryActivity extends AppCompatActivity {
                             dialog.findViewById(R.id.spinner_purpose_selection_text_input_layout).setVisibility(View.VISIBLE);
 
                         }
-                        Glide.with(ViewEntryActivity.this).load(student_info.getString("photo_url")).placeholder(R.drawable.demo_pic1).error(R.drawable.baseline_error_24).into(mStudentImageview);
+                        Glide.with(ViewEntryActivity.this).load(student_info.getString("photo_url")).placeholder(R.drawable.demo_pic1).into(mStudentImageview);
                     } catch (Exception e) {
-                        Toast.makeText(ViewEntryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("Error", e.getMessage());
                         onErrorResponse(e.getMessage());
                     }
 
@@ -283,8 +282,8 @@ public class ViewEntryActivity extends AppCompatActivity {
                             final JSONObject student_info = mJSONObject.getJSONObject("data");
                             final String name = student_info.getString("name");
                             final long scholar_no = Long.parseLong(scholarNumber);
-                            final int phone_no = student_info.getInt("phone_no");
-                            final int room_no = student_info.getInt("room_no");
+                            final String phone_no = student_info.getString("phone_no");
+                            final String room_no = student_info.getString("room_no");
                             final String photo_url = student_info.getString("photo_url");
                             final String section = student_info.getString("section");
                             final String hostel_name = student_info.getString("hostel_name");
@@ -420,7 +419,6 @@ public class ViewEntryActivity extends AppCompatActivity {
         });
     }
 
-
     private void checkForUpdate() {
         blinkAnim(lb.status);
         lb.status.setText("syncing...");
@@ -472,7 +470,6 @@ public class ViewEntryActivity extends AppCompatActivity {
     private final Handler mPostDelayedHandler = new Handler();
     private final Runnable updateListRunnable = () -> checkForUpdate();
 
-
     private void fetchAllEntriesFromDBAndUpdateRecyclerView() {
 
         mMariaDBConnection.fetchEntryExitList(new MariaDBConnection.Callback() {
@@ -485,7 +482,7 @@ public class ViewEntryActivity extends AppCompatActivity {
                 final JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
                 final JsonArray dataArray = jsonObject.getAsJsonArray("data");
 
-                for (int i = dataArray.size() - 1; i > 0; i--) {
+                for (int i = dataArray.size() - 1; i >= 0; i--) {
                     JsonObject entryObject = dataArray.get(i).getAsJsonObject();
 
                     String entryNo = entryObject.get("id").getAsString();

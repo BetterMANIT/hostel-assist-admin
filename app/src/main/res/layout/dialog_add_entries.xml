@@ -31,7 +31,6 @@
             android:id="@+id/editTextScholarNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="12345678901"
             android:focusable="true"
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>

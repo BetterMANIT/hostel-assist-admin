@@ -1,8 +1,5 @@
 package com.manit.hostel.assist;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,6 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -31,8 +31,9 @@ import java.util.List;
 public class CategoryCreationActivity extends AppCompatActivity {
 
     private Button mCreateCategoryButton;
-    private TextInputEditText mMYSQLConstantTableName,mMYSQLVariableTableName, mCategoryNameEditText;
+    private TextInputEditText mMYSQLConstantTableName, mMYSQLVariableTableName, mCategoryNameEditText;
     private TextInputLayout mHostelSpinnerTextInputLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,25 +44,29 @@ public class CategoryCreationActivity extends AppCompatActivity {
         fetchListOfHostels();
 
 
-
     }
 
     private void addCreateCategoryButton() {
         this.mCreateCategoryButton = findViewById(R.id.buttonCreateCategory);
         mCreateCategoryButton.setOnClickListener(v -> {
             final AutoCompleteTextView mHostelSelectionSpinnerAutoCompleteTextView = findViewById(R.id.hostel_selection_spinner);
-            if(mHostelSelectionSpinnerAutoCompleteTextView.getText() == null){
+            if (mHostelSelectionSpinnerAutoCompleteTextView.getText() == null) {
                 mHostelSelectionSpinnerAutoCompleteTextView.showDropDown();
                 Toast.makeText(CategoryCreationActivity.this, "Select a hostel", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if(mCategoryNameEditText.getEditableText()==null || mCategoryNameEditText.getEditableText().toString().isEmpty()){
+            if (mCategoryNameEditText.getEditableText() == null || mCategoryNameEditText.getEditableText().toString().isEmpty()) {
                 mCategoryNameEditText.requestFocus();
                 Toast.makeText(CategoryCreationActivity.this, "Please enter category name", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if(mMYSQLConstantTableName.getEditableText()==null || mMYSQLConstantTableName.getEditableText().toString().isEmpty()){
+            if (mMYSQLConstantTableName.getEditableText() == null || mMYSQLConstantTableName.getEditableText().toString().isEmpty()) {
                 mMYSQLConstantTableName.requestFocus();
+                Toast.makeText(CategoryCreationActivity.this, "Please enter table name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (mMYSQLVariableTableName.getEditableText() == null || mMYSQLVariableTableName.getEditableText().toString().isEmpty()) {
+                mMYSQLVariableTableName.requestFocus();
                 Toast.makeText(CategoryCreationActivity.this, "Please enter table name", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -70,45 +75,38 @@ public class CategoryCreationActivity extends AppCompatActivity {
             pd.setMessage("Creating category");
             pd.show();
 
-            new MariaDBConnection(CategoryCreationActivity.this)
-                    .create_new_category_in_a_hostel(mCategoryNameEditText.getEditableText().toString(), mMYSQLConstantTableName.getEditableText().toString(),
-                            mMYSQLVariableTableName.getEditableText().toString() ,
-                            mHostelSelectionSpinnerAutoCompleteTextView.getEditableText().toString(),
-                            AppPref.getUsername(CategoryCreationActivity.this),
-                            new MariaDBConnection.Callback() {
-                                @Override
-                                public void onResponse(String result) {
-                                    Toast.makeText(CategoryCreationActivity.this, "Category creation is successful", Toast.LENGTH_SHORT).show();
-                                    Log.d(CategoryCreationActivity.class.getSimpleName(), result);
-                                    pd.dismiss();
-                                }
+            new MariaDBConnection(CategoryCreationActivity.this).create_new_category_in_a_hostel(mCategoryNameEditText.getEditableText().toString(), mMYSQLConstantTableName.getEditableText().toString(), mMYSQLVariableTableName.getEditableText().toString(), mHostelSelectionSpinnerAutoCompleteTextView.getEditableText().toString(), AppPref.getUsername(CategoryCreationActivity.this), new MariaDBConnection.Callback() {
+                @Override
+                public void onResponse(String result) {
+                    Toast.makeText(CategoryCreationActivity.this, "Category creation is successful", Toast.LENGTH_SHORT).show();
+                    Log.d(CategoryCreationActivity.class.getSimpleName(), result);
+                    pd.dismiss();
+                }
 
-                                @Override
-                                public void onErrorResponse(String error) {
-                                    Toast.makeText(CategoryCreationActivity.this, "Error in category creation : " + error, Toast.LENGTH_SHORT).show();
-                                    Log.d(CategoryCreationActivity.class.getSimpleName(), error);
-                                    pd.dismiss();
-                                }
-                            });
+                @Override
+                public void onErrorResponse(String error) {
+                    Toast.makeText(CategoryCreationActivity.this, "Error in category creation : " + error, Toast.LENGTH_SHORT).show();
+                    Log.d(CategoryCreationActivity.class.getSimpleName(), error);
+                    pd.dismiss();
+                }
+            });
         });
     }
 
     private void addCategoryPurposeEditText() {
-         this.mMYSQLConstantTableName = findViewById(R.id.editTextMYSQLDBTableName);
-         this.mMYSQLVariableTableName = findViewById(R.id.editTextMYSQLDBVariableTableNameSuffix);
-         this.mCategoryNameEditText = findViewById(R.id.editTextCategoryName);
-          mCategoryNameEditText.setFilters(new InputFilter[]{
-                (source, start, end, dest, dstart, dend) -> {
-                    for (int i = start; i < end; i++) {
-                        char c = source.charAt(i);
-                        if (!Character.isLetterOrDigit(c) && c != ' ' && c != '_') {
-                            Toast.makeText(this, "Special characters are not allowed", Toast.LENGTH_SHORT).show();
-                            return "";
-                        }
-                    }
-                    return null;
+        this.mMYSQLConstantTableName = findViewById(R.id.editTextMYSQLDBTableNamePrefix);
+        this.mMYSQLVariableTableName = findViewById(R.id.editTextTableNameSuffix);
+        this.mCategoryNameEditText = findViewById(R.id.editTextPurposeName);
+        mCategoryNameEditText.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
+            for (int i = start; i < end; i++) {
+                char c = source.charAt(i);
+                if (!Character.isLetterOrDigit(c) && c != ' ' && c != '_') {
+                    Toast.makeText(this, "Special characters are not allowed", Toast.LENGTH_SHORT).show();
+                    return "";
                 }
-        });
+            }
+            return null;
+        }});
         mCategoryNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -122,11 +120,11 @@ public class CategoryCreationActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s!=null && !s.toString().isEmpty()) {
+                if (s != null && !s.toString().isEmpty()) {
                     mCreateCategoryButton.setAlpha(1);
                     mCreateCategoryButton.setEnabled(true);
 //                    mMYSQLConstantTableName.setText(s.toString().replaceAll(" ", "_"));
-                }else{
+                } else {
                     mCreateCategoryButton.setAlpha(0.5F);
                     mCreateCategoryButton.setEnabled(false);
                 }
@@ -139,12 +137,12 @@ public class CategoryCreationActivity extends AppCompatActivity {
 //        mExpandableLayout.expand();
 //    }
 
-    void fetchListOfHostels(){
+    void fetchListOfHostels() {
         final MariaDBConnection.Callback mCallback = new MariaDBConnection.Callback() {
             @Override
             public void onResponse(String result) {
                 Log.d(CategoryCreationActivity.this.toString(), "onResponse: " + result);
-                try{
+                try {
                     JSONObject jsonObject = new JSONObject(result);
                     JSONArray dataArray = jsonObject.getJSONArray("data");
                     setupHostelSpinner(jsonArrayToList(dataArray));
@@ -165,7 +163,7 @@ public class CategoryCreationActivity extends AppCompatActivity {
 
     private void setupHostelSpinner(List<String> classes) {
 
-        this. mHostelSpinnerTextInputLayout = findViewById(R.id.spinner_hostel_select_text_input_layout);
+        this.mHostelSpinnerTextInputLayout = findViewById(R.id.spinner_hostel_select_text_input_layout);
         mHostelSpinnerTextInputLayout.setHint("Select Hostel");
         mHostelSpinnerTextInputLayout.setEnabled(true);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, classes);
@@ -187,11 +185,11 @@ public class CategoryCreationActivity extends AppCompatActivity {
 //            lb.viewEntries.setEnabled(true);
 //        });
     }
+
     @NonNull
     public static List<String> jsonArrayToList(JSONArray jsonArray) throws JSONException {
         List<String> list = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++)
-        {
+        for (int i = 0; i < jsonArray.length(); i++) {
             list.add(jsonArray.getString(i));
         }
         return list;

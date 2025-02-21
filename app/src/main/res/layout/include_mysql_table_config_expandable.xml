@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TABLE NAME"
+        android:text="TABLE NAME Prefix"
         android:textColor="#AB2A295E"
         android:textSize="12sp"
         android:textStyle="bold" />
@@ -19,39 +18,39 @@
         android:id="@+id/textInputLayoutMYSQLDBTableName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        >
+        android:focusable="true">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextMYSQLDBTableName"
+            android:id="@+id/editTextMYSQLDBTableNamePrefix"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="daily_class_entry"
             android:focusable="true"
+            android:hint="purpose without space"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <CheckBox
-        android:layout_marginTop="10dp"
         android:id="@+id/create_new_table_for_each_day"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/create_new_table_for_each_day"/>
+        android:layout_marginTop="10dp"
+        android:text="@string/create_new_table_for_each_day"
+        android:visibility="gone" />
 
     <CheckBox
-        android:layout_marginTop="10dp"
-
         android:id="@+id/create_new_table_for_each_month"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/create_new_table_for_each_month"/>
+        android:layout_marginTop="10dp"
+        android:text="@string/create_new_table_for_each_month"
+        android:visibility="gone" />
 
     <TextView
-        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="VARIABLE TABLE NAME SUFFIX"
+        android:layout_marginTop="10dp"
+        android:text="TABLE NAME SUFFIX (ex. H10C / H10D)"
         android:textColor="#AB2A295E"
         android:textSize="12sp"
         android:textStyle="bold" />
@@ -60,16 +59,16 @@
         android:id="@+id/textInputLayoutMYSQLDBVariableTableNameSuffix"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        >
+        android:hint="suffix for event"
+        android:focusable="true">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextMYSQLDBVariableTableNameSuffix"
+            android:id="@+id/editTextTableNameSuffix"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="{mm}{yyyy}"
             android:focusable="true"
-            android:inputType="text" />
+            android:inputType="text"
+            android:text="" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

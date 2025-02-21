@@ -10,6 +10,8 @@ import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.manit.hostel.assist.database.MariaDBConnection;
@@ -64,9 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!isInternetAvailable(this)) {
                         showNoInternetDialog(this);
                     } else {
-                        Intent in = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(in);
-                        finish();
+                        openApp();
 
                     }
                 });
@@ -74,6 +74,18 @@ public class MainActivity extends AppCompatActivity {
                 showNoInternetDialog(this);
             }
         });
+    }
+
+    private void openApp() {
+        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            Intent in = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(in);
+            finish();
+        }else{
+            Intent in = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(in);
+            finish();
+        }
     }
 
     public static void allowAllSSL() {

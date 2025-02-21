@@ -3,6 +3,7 @@ package com.manit.hostel.assist.adapters;
 import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -13,9 +14,12 @@ import com.manit.hostel.assist.R;
 import com.manit.hostel.assist.data.Entries;
 import com.manit.hostel.assist.databinding.StudentViewBinding;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @SuppressLint("NotifyDataSetChanged")
@@ -23,6 +27,7 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
     public static final int ALL_FILTER = 1;
     public static final int EXIT_ONLY_FILTER = 2;
     public static final int ENTERED_FILTER = 3;
+    private static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public ArrayList<Entries> getOriginalEntriesList() {
         return originalEntriesList;
@@ -30,13 +35,11 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
 
     private ArrayList<Entries> originalEntriesList;
     private ArrayList<Entries> filteredEntriesList;
-    private String todaysDateStringInYYYY_MM_DD = "";
 
     // Constructor to accept the list
     public EntriesAdapter(ArrayList<Entries> entriesList) {
         this.originalEntriesList = new ArrayList<>(entriesList);
         this.filteredEntriesList = new ArrayList<>(entriesList);
-        this.todaysDateStringInYYYY_MM_DD = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
 
@@ -55,14 +58,13 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
         holder.binding.index.setText(String.valueOf(filteredEntriesList.get(position).getEntryNo()));
         // Bind data to the views using the binding object
 //        holder.binding.entryNo.setText("Entry No. - " + currentEntry.getEntryNo());
-        holder.binding.name.setText("Name: " + currentEntry.getName());
+        holder.binding.name.setText(currentEntry.getName());
         holder.binding.roomNo.setText("Room No: " + currentEntry.getRoomNo());
-        holder.binding.scholarNo.setText("Scholar No. - " + currentEntry.getScholarNo());
-
-        holder.binding.exitTime.setText(currentEntry.getExitTime().replace(todaysDateStringInYYYY_MM_DD, ""));
-        holder.binding.entryTime.setText(currentEntry.getEntryTime().replace(todaysDateStringInYYYY_MM_DD, ""));
+        holder.binding.scholarNo.setText("Scholar No: " + currentEntry.getScholarNo());
+        dateHeaderLogic(holder, position, currentEntry);
+        holder.binding.exitTime.setText(formatDate(currentEntry.getExitTime()));
+        holder.binding.entryTime.setText(formatDate(currentEntry.getEntryTime()));
         Glide.with(holder.binding.getRoot().getContext()).load(currentEntry.getPhotoURL()).placeholder(R.drawable.demo_pic1).error(R.drawable.baseline_error_24).into(holder.binding.studentImageview);
-
     }
 
     @Override
@@ -127,4 +129,32 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
             this.binding = binding;
         }
     }
+
+    public static String formatDate(String dateStr) {
+        try {
+            Date date = inputFormat.parse(dateStr);  // Parse input date string
+            return (new SimpleDateFormat("dd MMM yyyy\nhh:mm a")).format(date);        // Format to desired output
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateStr; // Return original if parsing fails
+        }
+    }
+
+
+    private void dateHeaderLogic(@NonNull EntriesViewHolder holder, int position, Entries entryDetail) {
+        String currentDate = entryDetail.getEntryTime().split(" ")[0];
+        if (position == 0) {
+            holder.binding.tvDateHeader.setVisibility(View.VISIBLE);
+            holder.binding.tvDateHeader.setText(currentDate);
+        } else {
+            String previousDate = filteredEntriesList.get(position - 1).getEntryTime().split(" ")[0];
+            if (!currentDate.equals(previousDate)) {
+                holder.binding.tvDateHeader.setVisibility(View.VISIBLE);
+                holder.binding.tvDateHeader.setText(currentDate);
+            } else {
+                holder.binding.tvDateHeader.setVisibility(View.GONE);
+            }
+        }
+    }
 }
+
