@@ -31,7 +31,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:padding="4dp"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="bottom"
             android:scaleType="fitXY"
             android:layout_margin="8dp"
             android:src="@drawable/demo_pic1"
@@ -42,12 +42,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="14dp"
-            android:background="@drawable/rounded_bg"
+            android:layout_marginTop="4dp"
             android:backgroundTint="@color/color2"
             android:padding="4dp"
             android:text="10"
-            android:textColor="@color/white" />
+            android:textColor="@color/color1" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -142,8 +141,14 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-
-
+        <View
+            android:id="@+id/status"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right"
+            android:layout_margin="10dp"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="#ff0000"/>
     </FrameLayout>
 
     <com.google.android.material.divider.MaterialDivider
@@ -152,4 +157,6 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="4dp"
         app:dividerColor="@android:color/darker_gray" />
+
+
 </LinearLayout>

@@ -74,8 +74,8 @@ public class MariaDBConnection {
 
     }
 
-    public void fetchEntryExitList(Callback callback, String table_name, String purpose) {
-        String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME + "?table_name=" + table_name;
+    public void fetchEntryExitList(Callback callback, String table_name, String purpose, String dateSelected) {
+        String BASE_URL_PLUS_SUFFIX = BASE_URL + URL_SUFFIX_FETCH_ALL_ENTRIES_BY_TABLE_NAME + "?table_name=" + table_name + "&fromDate=" + dateSelected + "&toDate=" + dateSelected;
         if (purpose != null) BASE_URL_PLUS_SUFFIX += "&purpose=" + purpose;
         Log.d(MariaDBConnection.class.getSimpleName(), "Sending request to : " + BASE_URL_PLUS_SUFFIX);
         final StringRequest mStringRequest = getmStringRequest(callback, BASE_URL_PLUS_SUFFIX, Request.Method.GET);
@@ -252,6 +252,10 @@ public class MariaDBConnection {
         mQueue.add(mStringRequest);
 
 
+    }
+
+    public String getPhotoUrl(String scholarno) {
+        return BASE_URL+"/student/photos/"+scholarno+".png";
     }
 
     public interface Callback {

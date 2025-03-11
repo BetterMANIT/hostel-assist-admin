@@ -1,5 +1,6 @@
 package com.manit.hostel.assist.data;
 public class Entries {
+    private String purpose;
     private String entryNo;
     private String name;
     private String roomNo;
@@ -24,6 +25,7 @@ public class Entries {
                    String name,
                    String roomNo,
                    String scholarNo,
+                   String purpose,
                    String exitTime,
                    String entryTime,
                    String photoURL) {
@@ -31,6 +33,7 @@ public class Entries {
         this.name = name;
         this.roomNo = roomNo;
         this.scholarNo = scholarNo;
+        this.purpose = purpose;
         this.exitTime = exitTime;
         isBackInHostel = !(entryTime == null || entryTime.isEmpty());
         this.entryTime = entryTime;
@@ -94,5 +97,13 @@ public class Entries {
 
     public void setEntryTime(String entryTime) {
         this.entryTime = entryTime;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 }

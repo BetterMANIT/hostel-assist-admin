@@ -5,9 +5,15 @@ import static com.manit.hostel.assist.adapters.EntriesAdapter.ENTERED_FILTER;
 import static com.manit.hostel.assist.adapters.EntriesAdapter.EXIT_ONLY_FILTER;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -40,16 +46,22 @@ import com.manit.hostel.assist.data.Entries;
 import com.manit.hostel.assist.database.MariaDBConnection;
 import com.manit.hostel.assist.databinding.ActivityViewEntriesBinding;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -61,7 +73,7 @@ public class ViewEntryActivity extends AppCompatActivity {
     private int currentFilter = ALL_FILTER;
     private boolean searchEnable = false;
     private TextView mStudentsBackInHostel, mStudentsOutOfHostel;
-
+    private String dateSelected;
     private MariaDBConnection mMariaDBConnection;
 
     @Override
@@ -73,12 +85,18 @@ public class ViewEntryActivity extends AppCompatActivity {
         mStudentsBackInHostel = findViewById(R.id.students_back_in_hostel);
 
         this.mMariaDBConnection = new MariaDBConnection(this);
+        Glide.get(this).clearMemory(); // Clears memory cache (Must run on UI thread)
 
+        new Thread(() -> {
+            Glide.get(ViewEntryActivity.this).clearDiskCache(); // Clears disk cache (Must run on background thread)
+        }).start();
 
         if (getIntent().hasExtra(INTENT_KEY_HOSTEL_NAME))
             lb.hostelName.setText("Hostel : " + getIntent().getStringExtra(INTENT_KEY_HOSTEL_NAME)); // Set the hostel name
         if (getIntent().hasExtra(INTENT_PURPOSE))
-            lb.purpose.setText(getIntent().getStringExtra(INTENT_PURPOSE));  // Set the date
+            lb.purpose.setText(getIntent().getStringExtra(INTENT_PURPOSE));
+        if (getIntent().hasExtra(INTENT_KEY_DATE))
+            dateSelected = (getIntent().getStringExtra(INTENT_KEY_DATE));
         lb.studentsListRecyclerview.post(() -> lb.studentsListRecyclerview.setLayoutManager(new LinearLayoutManager(this)));
         addClickLogicToFilters();
         addClickLogic();
@@ -103,22 +121,7 @@ public class ViewEntryActivity extends AppCompatActivity {
 
     @NonNull
     private String getTableName() {
-        if (true) return getIntent().getStringExtra(INTENT_TABLE_NAME);
-        String DATE_MMYYYY = new SimpleDateFormat("MMyyyy", Locale.getDefault()).format(new Date());
-        final String originalDateString = getIntent().getStringExtra(INTENT_KEY_DATE);
-        final SimpleDateFormat originalFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-        final SimpleDateFormat targetFormat = new SimpleDateFormat("MMyyyy", Locale.getDefault());
-
-        try {
-            assert originalDateString != null;
-            Date date = originalFormat.parse(originalDateString);
-            assert date != null;
-            DATE_MMYYYY = targetFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();  // Handle the parsing error if the date format is incorrect
-        }
-
-        return DATE_MMYYYY + getIntent().getStringExtra(INTENT_KEY_HOSTEL_NAME);
+        return getIntent().getStringExtra(INTENT_TABLE_NAME);
     }
 
 
@@ -471,17 +474,23 @@ public class ViewEntryActivity extends AppCompatActivity {
     private final Runnable updateListRunnable = () -> checkForUpdate();
 
     private void fetchAllEntriesFromDBAndUpdateRecyclerView() {
-
         mMariaDBConnection.fetchEntryExitList(new MariaDBConnection.Callback() {
             @Override
             public void onResponse(String result) {
-                Log.d(ViewEntryActivity.class.getSimpleName(), result.toString());
+                Log.d(ViewEntryActivity.class.getSimpleName(), result);
                 Log.e("list", result);
 
                 final ArrayList<Entries> entriesList = new ArrayList<>();
                 final JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
-                final JsonArray dataArray = jsonObject.getAsJsonArray("data");
 
+                // Extract Statistics
+                final JsonObject statistics = jsonObject.getAsJsonObject("statistics");
+                int totalEntries = statistics.get("total_entries").getAsInt();
+                int studentsBack = statistics.get("came_back_students").getAsInt();
+                int studentsOut = statistics.get("out_students").getAsInt();
+
+                // Extract Entries Data
+                final JsonArray dataArray = jsonObject.getAsJsonArray("data");
                 for (int i = dataArray.size() - 1; i >= 0; i--) {
                     JsonObject entryObject = dataArray.get(i).getAsJsonObject();
 
@@ -490,28 +499,138 @@ public class ViewEntryActivity extends AppCompatActivity {
                     String roomNo = entryObject.get("room_no").getAsString();
                     String scholarNo = entryObject.get("scholar_no").getAsString();
                     String exitTime = entryObject.get("open_time").getAsString();
-                    String entryTime = "";
-                    if (!entryObject.get("close_time").isJsonNull())
-                        entryTime = entryObject.get("close_time").getAsString();
-                    String photoURL = entryObject.get("photo_url").getAsString();
+                    String entryTime = entryObject.has("close_time") && !entryObject.get("close_time").isJsonNull()
+                            ? entryObject.get("close_time").getAsString()
+                            : "Not Returned";
+                    String photoURL = mMariaDBConnection.getPhotoUrl(scholarNo);
+                    String purpose = entryObject.get("purpose").getAsString();
 
-                    entriesList.add(new Entries(entryNo, name, roomNo, scholarNo, exitTime, entryTime, photoURL));
+                    entriesList.add(new Entries(entryNo, name, roomNo, scholarNo,purpose, exitTime, entryTime, photoURL));
                 }
 
+                // Update RecyclerView
                 mPostDelayedHandler.removeCallbacks(updateListRunnable);
                 mPostDelayedHandler.postDelayed(updateListRunnable, 10000);
                 updateRecyclerViewList(entriesList);
+                enableXcelButton(entriesList);
 
+                // Display Statistics
+                if (mStudentsBackInHostel != null)
+                    mStudentsBackInHostel.setText(getString(R.string.students_back_in_hostel) + " : " + studentsBack);
+                if (mStudentsOutOfHostel != null)
+                    mStudentsOutOfHostel.setText(getString(R.string.students_out_of_hostel) + " : " + studentsOut);
             }
 
             @Override
             public void onErrorResponse(String error) {
                 Toast.makeText(ViewEntryActivity.this, "Error : " + error, Toast.LENGTH_LONG).show();
-                Log.d(ViewEntryActivity.class.getSimpleName(), error.toString());
-
+                Log.d(ViewEntryActivity.class.getSimpleName(), error);
             }
-        }, getTableName(), getPurpose());
+        }, getTableName(), getPurpose(), dateSelected);
+    }
 
+    private void enableXcelButton(ArrayList<Entries> entriesList) {
+        lb.export.setOnClickListener(v -> {
+            Uri fileUri = saveListAsExcel(ViewEntryActivity.this, entriesList);
+            if (fileUri != null) {
+                openExcelFile(ViewEntryActivity.this, fileUri);
+            }
+        });
+    }
+
+    private void openExcelFile(Context context, Uri fileUri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(fileUri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        try {
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, "No app found to open Excel file!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Uri saveListAsExcel(Context context, ArrayList<Entries> entriesList) {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Student Entries");
+
+        sheet.setColumnWidth(0, 3000);
+        sheet.setColumnWidth(1, 9000);
+        sheet.setColumnWidth(2, 4000);
+        sheet.setColumnWidth(3, 5000);
+        sheet.setColumnWidth(4, 6000);
+        sheet.setColumnWidth(5, 9000);
+        sheet.setColumnWidth(6, 9000);
+
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"ID", "Name", "Room No", "Scholar No", "Purpose", "Open Time", "Close Time"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(getHeaderStyle(workbook));
+        }
+
+
+        // Fill Data
+        for (int i = 0; i < entriesList.size(); i++) {
+            Entries entry = entriesList.get(i);
+            Row row = sheet.createRow(i + 1);
+            row.createCell(0).setCellValue(entry.getEntryNo());
+            row.createCell(1).setCellValue(entry.getName());
+            row.createCell(2).setCellValue(entry.getRoomNo());
+            row.createCell(3).setCellValue(entry.getScholarNo());
+            row.createCell(4).setCellValue(entry.getPurpose());
+            row.createCell(5).setCellValue(entry.getExitTime());
+            row.createCell(6).setCellValue(entry.getEntryTime());
+        }
+
+        // Save File in Downloads Folder
+        try {
+            OutputStream outputStream;
+            Uri fileUri = null;
+            String fileName = dateSelected+"_entries_"+getTableName()+".xlsx";
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                values.put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+                // Save inside "Downloads/YourAppFolder/"
+                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/HostelAssist");
+
+                Uri uri = context.getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                outputStream = context.getContentResolver().openOutputStream(uri);
+                fileUri = uri;
+            } else {
+                // Save inside "Downloads/YourAppFolder/" for older versions
+                File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "HostelAssist");
+                if (!directory.exists()) {
+                    directory.mkdirs(); // Create folder if it doesn't exist
+                }
+
+                File file = new File(directory, fileName);
+                outputStream = new FileOutputStream(file);
+                fileUri = Uri.fromFile(file);
+            }
+            workbook.write(outputStream);
+            outputStream.close();
+            workbook.close();
+
+            Toast.makeText(context, "Excel saved in Downloads folder!", Toast.LENGTH_SHORT).show();
+            return fileUri;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(context, "Failed to save Excel!", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
+    private CellStyle getHeaderStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        style.setFont(font);
+        return style;
     }
 
     void updateRecyclerViewList(ArrayList<Entries> entriesList) {
@@ -522,30 +641,8 @@ public class ViewEntryActivity extends AppCompatActivity {
             entAdapter.updateEntries(entriesList);
         }
         entAdapter.filterEntries(currentFilter);
-        Integer[] countOfStudentsInHostel = getCountOfStudentsInBacKHostel(entriesList);
-        if (mStudentsBackInHostel != null)
-            mStudentsBackInHostel.setText(getString(R.string.students_back_in_hostel) + " : " + countOfStudentsInHostel[0]);
-        if (mStudentsOutOfHostel != null)
-            mStudentsOutOfHostel.setText(getString(R.string.students_out_of_hostel) + " : " + countOfStudentsInHostel[1]);
-
     }
 
-    private Integer[] getCountOfStudentsInBacKHostel(ArrayList<Entries> entriesList) {
-        if (entAdapter == null) return new Integer[]{-1, -1};
-
-        Set<String> scholarNoSetBackInHostel = new HashSet<>();
-        Set<String> scholarNoSetOutsideOfHostel = new HashSet<>();
-        entriesList.forEach(entries -> {
-            if (entries.isBackInHostel() && !scholarNoSetOutsideOfHostel.contains(entries.getEntryNo())) {
-                scholarNoSetBackInHostel.add(entries.getScholarNo());
-            } else if (!scholarNoSetBackInHostel.contains(entries.getEntryNo())) {
-                scholarNoSetOutsideOfHostel.add(entries.getScholarNo());
-            }
-
-        });
-
-        return new Integer[]{scholarNoSetBackInHostel.size(), scholarNoSetOutsideOfHostel.size()};
-    }
 
 
 }

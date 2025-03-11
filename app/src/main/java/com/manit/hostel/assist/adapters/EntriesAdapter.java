@@ -1,6 +1,8 @@
 package com.manit.hostel.assist.adapters;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +66,12 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
         dateHeaderLogic(holder, position, currentEntry);
         holder.binding.exitTime.setText(formatDate(currentEntry.getExitTime()));
         holder.binding.entryTime.setText(formatDate(currentEntry.getEntryTime()));
-        Glide.with(holder.binding.getRoot().getContext()).load(currentEntry.getPhotoURL()).placeholder(R.drawable.demo_pic1).error(R.drawable.baseline_error_24).into(holder.binding.studentImageview);
+        if (currentEntry.getEntryTime().toLowerCase().contains("not")) {
+            holder.binding.status.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FF0000"))); // Bright Red
+        } else if (currentEntry.getEntryTime().length() > 5) {
+            holder.binding.status.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF00"))); // Bright Green
+        }
+        Glide.with(holder.binding.getRoot().getContext()).load(currentEntry.getPhotoURL()).placeholder(R.drawable.placeholder).error(R.drawable.placeholder).into(holder.binding.studentImageview);
     }
 
     @Override
@@ -142,12 +149,12 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntriesV
 
 
     private void dateHeaderLogic(@NonNull EntriesViewHolder holder, int position, Entries entryDetail) {
-        String currentDate = entryDetail.getEntryTime().split(" ")[0];
+        String currentDate = entryDetail.getExitTime().split(" ")[0];
         if (position == 0) {
             holder.binding.tvDateHeader.setVisibility(View.VISIBLE);
             holder.binding.tvDateHeader.setText(currentDate);
         } else {
-            String previousDate = filteredEntriesList.get(position - 1).getEntryTime().split(" ")[0];
+            String previousDate = filteredEntriesList.get(position - 1).getExitTime().split(" ")[0];
             if (!currentDate.equals(previousDate)) {
                 holder.binding.tvDateHeader.setVisibility(View.VISIBLE);
                 holder.binding.tvDateHeader.setText(currentDate);

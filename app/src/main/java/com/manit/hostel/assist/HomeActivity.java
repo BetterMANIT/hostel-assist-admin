@@ -1,15 +1,11 @@
 package com.manit.hostel.assist;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,15 +20,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
-    @NonNull ActivityHomeBinding lb;
+    @NonNull
+    ActivityHomeBinding lb;
 
     @Override
     protected void onResume() {
@@ -48,45 +43,63 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(lb.getRoot());
         addClickLogic();
         addDatesToDateSelectionSpinner();
-        addCheckbox();
         addCreateCategoryButton();
-
-//        final MariaDBConnection.Callback mCallback =new MariaDBConnection.Callback() {
-//            @Override
-//            public void onResponse(String result) {
-//                Log.d(HomeActivity.this.toString(), "onResponse: " + result);
-//                try{
-//                    JSONObject jsonObject = new JSONObject(result);
-//                    JSONArray dataArray = jsonObject.getJSONArray("data");
-//                    setupHostelSpinner(jsonArrayToList(dataArray));
-//                } catch (JSONException e) {
-//                    onErrorResponse(e.getMessage());
-//                }
-//            }
-//
-//            @Override
-//            public void onErrorResponse(String error) {
-//                Log.d(HomeActivity.this.toString(), "onError: " + error);
-//
-//            }
-//        };
-//        new MariaDBConnection(this).get_list_of_hostel_names(mCallback);
+        initDateSelector();
         getAndUpdateListOfPurposeInSpinner();
         setUpViewEntryButton();
-//        lb.date.setText(getDateFormatted());
 
     }
 
-    private void getAndUpdateListOfPurposeInSpinner(){
+    private void initDateSelector() {
+        TextInputLayout dateInputLayout = findViewById(R.id.spinner_date_selection_text_input_layout);
+        AutoCompleteTextView dateSelection = findViewById(R.id.date_picker_text);
+        setTodaysDate(dateSelection);
+
+        dateSelection.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            String formattedDateT = String.format(Locale.getDefault(), "%04d-%02d-%02d",
+                    year, month + 1, day);
+            dateSelection.setText(formattedDateT);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        String formattedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d",
+                                selectedYear, selectedMonth + 1, selectedDay);
+                        dateSelection.setText(formattedDate);
+                    },
+                    year, month, day  // Pre-selected today
+            );
+
+            // Disable future dates
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            datePickerDialog.show();
+        });
+
+
+    }
+
+    private static void setTodaysDate(AutoCompleteTextView dateSelection) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        String formattedDateT = String.format(Locale.getDefault(), "%04d-%02d-%02d",
+                year, month + 1, day);
+        dateSelection.setText(formattedDateT);
+    }
+
+    private void getAndUpdateListOfPurposeInSpinner() {
         new MariaDBConnection(this).get_list_of_category_name_with_table_name_with_hostel_name(new MariaDBConnection.Callback() {
             @Override
             public void onResponse(String result) {
-                try{
+                try {
                     JSONObject jsonResponse = new JSONObject(result);
                     hostel_names_parent_with_table_with_category_child = jsonResponse.getJSONObject("data");
                     setupHostelSpinner(jsonArrayToList(hostel_names_parent_with_table_with_category_child.names()));
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     onErrorResponse(e.getMessage());
                 }
                 Log.d(HomeActivity.class.getSimpleName(), "result : " + result);
@@ -102,7 +115,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
     private JSONObject hostel_names_parent_with_table_with_category_child;
 
 
@@ -110,23 +122,11 @@ public class HomeActivity extends AppCompatActivity {
         lb.createCategoryButton.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, CategoryCreationActivity.class)));
     }
 
-    private void addCheckbox() {
-        final CheckBox mDateSelectionRangeCheckbox = findViewById(R.id.enable_date_selection_range_checkbox);
-        mDateSelectionRangeCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked) {
-                findViewById(R.id.from_date_selection).setVisibility(View.VISIBLE);
-            }else{
-                findViewById(R.id.from_date_selection).setVisibility(View.GONE);
-            }
-        });
-    }
-
     private void setUpViewEntryButton() {
         lb.viewEntries.setOnClickListener(v -> {
-            final AutoCompleteTextView mDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_to_date_selection);
             final AutoCompleteTextView mHostelSelectionAutoCompleteTextView = findViewById(R.id.hostel_selection_spinner);
 
-            if(mHostelSelectionAutoCompleteTextView.getText().toString().equals("")){
+            if (mHostelSelectionAutoCompleteTextView.getText().toString().equals("")) {
                 mHostelSelectionAutoCompleteTextView.showDropDown();
                 Toast.makeText(HomeActivity.this, getString(R.string.select_a_hostel), Toast.LENGTH_LONG).show();
                 return;
@@ -135,7 +135,8 @@ public class HomeActivity extends AppCompatActivity {
             final Intent mViewEntryActivity = new Intent(getApplicationContext(), ViewEntryActivity.class);
             mViewEntryActivity.putExtra(ViewEntryActivity.INTENT_TABLE_NAME, view_entries_table_name);
             mViewEntryActivity.putExtra(ViewEntryActivity.INTENT_PURPOSE, view_entries_purpose_name);
-            mViewEntryActivity.putExtra(ViewEntryActivity.INTENT_KEY_DATE, mDateSelectionAutoCompleteTextView.getText().toString());
+            AutoCompleteTextView datePickerText = findViewById(R.id.date_picker_text);
+            mViewEntryActivity.putExtra(ViewEntryActivity.INTENT_KEY_DATE, datePickerText.getText().toString());
             mViewEntryActivity.putExtra(ViewEntryActivity.INTENT_KEY_HOSTEL_NAME, mHostelSelectionAutoCompleteTextView.getText().toString());
             startActivity(mViewEntryActivity);
         });
@@ -145,43 +146,16 @@ public class HomeActivity extends AppCompatActivity {
 
     private void addDatesToDateSelectionSpinner() {
 
-        final AutoCompleteTextView mToDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_to_date_selection);
-        final AutoCompleteTextView mFromDateSelectionAutoCompleteTextView = findViewById(R.id.spinner_to_date_selection);
-
-        final List<String> dateList = new ArrayList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
-        // Get the current date
-        Calendar calendar = Calendar.getInstance();
-
-        // Add 7 dates starting from today
-        for (int i = 0; i < 7; i++) {
-            dateList.add(dateFormat.format(calendar.getTime()));
-            calendar.add(Calendar.DATE, -1);
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, dateList);
-        mToDateSelectionAutoCompleteTextView.setAdapter(adapter);
-        mToDateSelectionAutoCompleteTextView.setText(dateList.get(0), false); // false to not show dropdown
-
-
-        mFromDateSelectionAutoCompleteTextView.setAdapter(adapter);
-        mFromDateSelectionAutoCompleteTextView.setText(dateList.get(0), false); // false to not show dropdown
-
-
-
     }
 
     @NonNull
     public static List<String> jsonArrayToList(JSONArray jsonArray) throws JSONException {
         List<String> list = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++)
-        {
+        for (int i = 0; i < jsonArray.length(); i++) {
             list.add(jsonArray.getString(i));
         }
         return list;
     }
-
-
 
 
     private void addClickLogic() {
@@ -189,6 +163,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private String view_entries_table_name = null, view_entries_purpose_name;
+
     private void setPurposeSelector(final List<String> mPurposeList, final List<String> mTableNameList) {
         final TextInputLayout mTextInputLayout = findViewById(R.id.spinner_to_category_selection_text_input_layout);
         mTextInputLayout.setHint("Select Purpose");
@@ -212,7 +187,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
     private void setupHostelSpinner(List<String> classes) {
         final TextInputLayout mTextInputLayout = findViewById(R.id.spinner_hostel_select_text_input_layout);
         mTextInputLayout.setHint("Select Hostel");
@@ -223,7 +197,7 @@ public class HomeActivity extends AppCompatActivity {
         mHostelSelectionSpinnerAutoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
             Log.d(HomeActivity.this.toString(), "onItemSelected");
 
-            try{
+            try {
 
                 List<String> mPurposeList = new ArrayList<>();
                 List<String> mTableNameList = new ArrayList<>();
@@ -233,7 +207,7 @@ public class HomeActivity extends AppCompatActivity {
                     JSONObject tableObject = table_name_with_purpose.getJSONObject(i);
                     String purpose = tableObject.getString("purpose");
                     String table_name = tableObject.getString("table_name");
-                    Log.d(HomeActivity.class.getSimpleName(), "purpose : " + purpose + " table name : " +table_name );
+                    Log.d(HomeActivity.class.getSimpleName(), "purpose : " + purpose + " table name : " + table_name);
 
                     mTableNameList.add(table_name);
                     mPurposeList.add(purpose);
@@ -253,7 +227,7 @@ public class HomeActivity extends AppCompatActivity {
                 setPurposeSelector(mPurposeList, mTableNameList);
 
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 Toast.makeText(HomeActivity.this, "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
 //            lb.viewEntries.setAlpha(1);
